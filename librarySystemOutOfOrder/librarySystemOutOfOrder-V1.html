@@ -1,0 +1,156 @@
+<script src="../simpletest.js"></script>
+
+<script>
+
+// Specs:
+    // It should take an optional dependenciesArray.   
+    // If arguments.length > 1, and dependencyArr.length === 0 => Create new dependency parameter on libraryStorage. 
+    // If dependencyArr.length > 0 and dependencies are loaded return libraryName with loaded dependencies.
+    // If dependenciesArray.length >= 1, and dependencies === undefined create a dependencyStorage.
+    // The callback function for each library can only run once.
+
+(function() {
+
+    var libraryStorage = {}; 
+    
+    function clearStorage(){ // For testing purpose only. 
+            libraryStorage = {};
+        };
+
+
+    function librarySystemOutOfOrder(libName, dependencyArr, callback) {
+
+       
+        if (arguments.length === 1){
+
+            if('callback' in libraryStorage[libName]){
+                let storedLib = libraryStorage[libName];
+                let libNameKeys = Object.getOwnPropertyNames(libraryStorage[libName]);
+                let loadedStoredDependency = [];
+                libNameKeys.forEach(function(key) {
+                if(libraryStorage[key]) {
+                    storedLib[key] = libraryStorage[key];
+                    loadedStoredDependency.push(storedLib[key]);
+                };
+            });
+                return storedLib.callback.apply(this, loadedStoredDependency);
+            } else {
+                return libraryStorage[libName];
+            }
+    
+        } else {
+
+            // Check for dependency on dependencyArr.
+            // If arguments.length > 1, dependencyArr === true and dependencyArr.length === 0, 
+                // Create new dependency parameter on libraryStorage where parameter === callback value.
+            if (dependencyArr.length === 0) {
+                let initialValue = libName;
+                let currentValue = callback();
+                dependencyArr.push(currentValue);
+                return libraryStorage[libName] = dependencyArr.reduce( function(initialValue, currentValue) {
+                    return currentValue;
+                }, initialValue);
+
+            } else {
+                // Check if all dependencyArr[i] in libraryStorage === true.
+                    // If dependencyArr[i] in libraryStorage => loadedDependencyArr.push(libraryStorage[dependencyArr[i]]).
+                    // apply loaded dependencies to callback and create loaded library => return libraryStorage[libName] = callback.apply( this, loadedDependencyArr);
+                let loadedDependencyArr = [];
+                let libNameObj = {};
+
+                for( let i = 0; i < dependencyArr.length; i++){
+                    if(!libraryStorage[dependencyArr[i]]) {
+                        // If dependencyArr[i] NOT in libraryStorage => create a library object with properties for each of the dependencies.
+                        libNameObj[dependencyArr[i]] = dependencyArr[i];
+                    }  else {
+                        loadedDependencyArr.push(libraryStorage[dependencyArr[i]]);
+                    }  ;
+                };
+
+                if(loadedDependencyArr.length > 0){
+                    return libraryStorage[libName] = callback.apply(this, loadedDependencyArr);
+                } else {
+                    libNameObj['callback'] = callback;
+                    return libraryStorage[libName] = libNameObj;
+                };
+            };
+        };
+    };
+    window.librarySystemOutOfOrder = librarySystemOutOfOrder;
+    window.clearStorage = clearStorage;
+})();
+
+
+    tests({
+        'It should take an optional dependencyArr.': function() {
+            let test1 = librarySystemOutOfOrder('test1', [], function() {
+                return 'test1 PASS'; //dependenciesArray was passed to librarySystemOutOfOrder
+            });
+            eq(test1, 'test1 PASS');
+        },
+        'If dependencyArr < 1 it should create a dependency library. ': function() {
+            let test2 = librarySystemOutOfOrder('test2', [], function() {
+                return 'test2 PASS'; // dependenciesArray was returned from libraryStorage
+            });
+            eq(test2, 'test2 PASS');
+        },
+        'If dependencyArr.length > 0 and dependencies are loaded return libraryName with loaded dependencies.': function() {
+            let dependencyTest3 = librarySystemOutOfOrder('dependencyTest3', [], function(test1) {
+                return 'Dependency for test3 was loaded to test3 library';
+            });
+            let test3 = librarySystemOutOfOrder('test3', ['dependencyTest3'], function(dependencyTest3) {
+                return 'test3 PASS if: ' + dependencyTest3 + '.';
+            });
+            eq(test3, 'test3 PASS if: Dependency for test3 was loaded to test3 library.' )
+        },
+        'If dependencyArr > 0, and dependencyArr[i] NOT in libraryStorage. Create a library object with nested properties for each of the dependencies missing + callback.': function() {
+            let test4 = librarySystemOutOfOrder('iNeedDependencies', ['dependency1', 'dependency2'], function(dependency1, dependency2) {
+                return 'Library iNeedDependencies was loaded with ' + dependency1 + ' and ' + dependency2 + '.';
+            });
+            eq(typeof test4, 'object');
+        },
+        'If dependencyArr.length === 0 create missing dependency in libraryStorage.( This test serve as dependency1)': function() {
+            let test5 = librarySystemOutOfOrder('dependency1', [], function() {
+                return 'loadedDependency1';
+            });
+            eq(test5, 'loadedDependency1');
+        },
+        'It should load multiple dependencies as required by the library.( This test serve as dependency2)': function() {
+            let test6 = librarySystemOutOfOrder('dependency2', [], function() {
+                return 'loadedDependency2';
+            });
+            eq(test6, 'loadedDependency2');
+        },
+        'It should return iNeedDependencies now loaded with the respective missing dependencies': function() {
+            let test7 = librarySystemOutOfOrder('iNeedDependencies');
+            eq(test7, 'Library iNeedDependencies was loaded with loadedDependency1 and loadedDependency2.');
+        },
+        'Callback function for each library is run only once.': function(){
+            clearStorage();
+            
+            let callbackCallCounter = 0;
+
+            librarySystemOutOfOrder('iNeedDependencies', ['dependency1', 'dependency2'], function(dependency1, dependency2) {
+                callbackCallCounter++;
+                return 'Library iNeedDependencies was loaded with ' + dependency1 + ' and ' + dependency2 + '.';
+            });
+
+            librarySystemOutOfOrder('dependency1', [], function() {
+                callbackCallCounter++;
+                return 'loadedDependency1';
+            });
+
+            librarySystemOutOfOrder('dependency2', [], function() {
+                callbackCallCounter++;
+                return 'loadedDependency2';
+            });
+
+            librarySystemOutOfOrder('iNeedDependencies');
+            librarySystemOutOfOrder('dependency1');
+            librarySystemOutOfOrder('dependency2');
+
+            eq(callbackCallCounter, 3);
+        
+        }
+    })
+</script>

@@ -1,0 +1,97 @@
+
+<script src="../simpletest.js"></script>
+
+<script>
+
+    /* 
+
+PJS runWithDebugger:
+
+    function sayHi() {
+        debugger;
+        console.log('hi!');
+    }
+
+    runWithDebugger(sayHi); // 'hi!'
+
+
+Specs:
+    It should take a callback function that accepts arguments.
+    example1:
+        
+        function sayHiTo(name) {
+            console.log('hi ' + name);
+        }
+    
+    It should take an optional array containing any argument you want to pass into the callback.
+    example 2:
+
+        runWithDebugger(sayHiTo, ['gordon']); 
+        
+        // 'hi gordon'
+    
+    If optionalArray, optionalArray should accept any number of arguments.
+    If optionalArray is nestedArray, recursively unwrap array.
+    example 3:
+        
+        function sayFullName(first, last) {
+            console.log(first + ' '  + last);
+        }
+        runWithDebugger(sayFullName, ['gordon', 'zhu']); // 'gordon zhu'    
+*/
+
+function runWithDebugger(callback, arrayOfArgs) {
+    debugger;
+
+    if (!arrayOfArgs){
+        callback();
+    };
+
+    if(arrayOfArgs && Array.isArray(arrayOfArgs)) {
+
+        return callback.apply(this, arrayOfArgs);
+
+    } else if(arrayOfArgs && !(Array.isArray(arrayOfArgs))) {
+
+        return callback(arrayOfArgs);
+
+    }
+};
+
+tests({
+    'It should take a callback function with no arguments.': function() {
+        function logName() {
+            console.log('Diego');
+        }
+        runWithDebugger(logName);
+    },
+    'It should take a callback function that accepts arguments.': function() {
+        let name = 'diego';
+        function logName(name) {
+            console.log(name);
+        };
+        runWithDebugger(logName, name);
+    },
+    'It should take an optional array containing any argument you want to pass into the callback.': function() {
+        let name = ['diego'];
+        function logName(name) {
+            console.log(name);
+        }
+        runWithDebugger(logName, name);
+    },
+    'If optionalArray, optionalArray should accept any number of arguments.': function() {
+        let fullName = ['diego','moura'];
+        function logFullName(first, last) {
+            console.log(first + ' ' + last);
+        }
+        runWithDebugger(logFullName, fullName);
+    },
+    'If optionalArray, optionalArray has nested arrays recursive until element.': function() {
+        let fullName = [[['diego']],'moura'];
+        function logFullName(first, last) {
+            console.log(first + ' ' + last);
+        }
+        runWithDebugger(logFullName, fullName);
+    },
+});
+</script>
