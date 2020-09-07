@@ -1,0 +1,177 @@
+<script src="../simpletest.js"></script>
+<script>
+// INSTRUCTIONS:
+// var canine = {
+//   bark: function() {
+//     console.log('bark');
+//   }
+// };
+
+// var dog = Object.create(canine);
+// dog.fetch = function() {
+//   console.log('fetch');
+// };
+
+// var myDog = Object.create(dog);
+// var empty = Object.create(null);
+
+// // These two lines are equivalent.
+// dog.isPrototypeOf(myDog);  // native function returns true
+// isPrototypeOf(dog, myDog); // your function does the same
+
+// // These two lines, similarly should return the same thing.
+// dog.isPrototypeOf(empty);  // native function returns false
+// isPrototypeOf(dog, empty); // your function does the same
+
+// // This should work too.
+// Object.prototype.isPrototypeOf(myDog);  // native function returns true
+// isPrototypeOf(Object.prototype, myDog); // your function does the same
+
+// // Also make sure that your function will work for any number of prototype links.
+// isPrototypeOf(canine, myDog) // true
+
+// THE OBJECT.PROTOTYPE.isPrototypeOF
+// prototypeObj.isPrototypeOf(object)
+    // object
+    //     The object whose prototype chain will be searched.
+
+//Returns
+    // A Boolean indicating whether the calling object lies in the prototype chain of the specified object.
+
+// Erros thrown
+    // TypeError
+    //     A TypeError is thrown if prototypeObj is undefined or null. 
+
+// MY SOLUTION
+
+
+function isPrototypeOf(objectPrototype, object) {
+    
+    if(objectPrototype === Object.prototype){
+        if(object.constructor === undefined) {
+            return false;
+        } else {
+            return true;
+        }
+    }  else if(objectPrototype === undefined || objectPrototype === null) {
+        throw new TypeError('Object to compare can not be undefined or null');
+    } else {
+
+        if(typeof objectPrototype === 'function') {
+            if(object.constructor === objectPrototype){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            for(var prop in objectPrototype) {
+                if(object[prop]){
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+}
+    
+
+tests({
+    'It should be able to check if the first Object argument is the prototype of the second Object argument': function() {
+    var canine = {
+        bark: function() {
+        console.log('bark');
+        }
+    };
+    var dog = Object.create(canine);
+    dog.fetch = function() {
+        console.log('fetch');
+    };
+    var myDog = Object.create(dog);
+    var empty = Object.create(null);
+
+    let test1 = isPrototypeOf(dog, myDog);
+    eq(test1, true);
+    },
+    'If Object.prototype is passed as the first argument it returns true, unless object has NO properties.': function() {
+    var canine = {
+        bark: function() {
+        console.log('bark');
+        }
+    };
+    var dog = Object.create(canine);
+    dog.fetch = function() {
+        console.log('fetch');
+    };
+    var myDog = Object.create(dog);
+    var empty = Object.create(null);
+
+    let test2 = isPrototypeOf(Object.prototype, myDog);
+    eq(test2, true);
+
+    let test2b = isPrototypeOf(Object.prototype, empty);
+    eq(test2b, false);
+    },
+    'It should be able to take as the first argument constructor functions as well.': function() {
+    function Dog2(name) { 
+        this.name = name,
+        this.bark = 'Woof!'
+    };
+    let dogRandom = new Dog2('dogRandom');
+
+    let test3 = isPrototypeOf(Dog2, dogRandom);
+    eq(test3, true);
+    },
+    'It should be able to check the prototype chain. (If the objects being compared have other constructor objects in between them)': function() {
+    var canine = {
+        bark: function() {
+        console.log('bark');
+        }
+    };
+    var dog = Object.create(canine);
+    dog.fetch = function() {
+        console.log('fetch');
+    };
+    var myDog = Object.create(dog);
+    var empty = Object.create(null);
+
+    let test4 = isPrototypeOf(canine, myDog);
+    eq(test4, true);
+    },
+    'A TypeError is thrown if objectPrototype is undefined or null. ': function() {
+    var test5 = false;
+    
+    try {
+        var undefinedObj = Object.create(undefined);
+        var canine = {
+            bark: function() {
+            console.log('bark');
+            }
+        };
+        var dog = Object.create(canine);
+        isPrototypeOf(undefinedObj, dog);
+    } catch(e) {
+        var test5 = (e instanceof TypeError);
+    }
+    eq(test5, true);
+    
+
+    var test5b = false;
+    
+    
+    try {
+        var nullObj = Object.create(null);
+        var canineB = {
+            bark: function() {
+            console.log('bark');
+            }
+        };
+        var dogB = Object.create(canine);
+        isPrototypeOf(nullObj, dogB);
+    } catch(e) {
+        var test5b = (e instanceof TypeError);
+    }
+    eq(test5b, true);
+    }
+});
+</script>
