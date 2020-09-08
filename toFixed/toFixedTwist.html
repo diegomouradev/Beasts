@@ -1,0 +1,67 @@
+<script src="/simpletest.js"></script>
+
+<script>
+
+// Requirements
+    // It should take two arguments. First: Should be an integer. Second: Should be an integer representing the number of decimals wanted the integer to be converted to.
+    // It should NOT use multiplication or exponential notation.
+
+
+// Cases to be tested
+    // "1.005" ==> "101"
+    // "0.615" ==>  "0.62"
+    // "10.235" ==> "10.24"
+
+    function ToFixedFromString(integer, decimalNotation) {
+        
+        if(typeof integer === 'number'){
+            integer = integer.toString();
+        };
+        
+        var indexDot = integer.indexOf('.');
+        var rightOfDotArr = [];
+        
+        let i = indexDot + 1;
+        while( i < integer.length){
+            rightOfDotArr.push(integer[i]);
+            i++;
+        }
+
+        var lastIndex = rightOfDotArr.length - 1;
+        if(eval(rightOfDotArr[lastIndex]) >= 5) {
+            if(eval(rightOfDotArr[lastIndex - 1]) < 9) {
+                rightOfDotArr[lastIndex - 1] = eval(rightOfDotArr[lastIndex - 1]) + 1;
+                rightOfDotArr[lastIndex - 1] = rightOfDotArr[lastIndex - 1] + '';
+                rightOfDotArr.length--;
+            } else {
+                rightOfDotArr[lastIndex - 1] = '0';
+                rightOfDotArr.length--;
+            }
+        } else {    
+            rightOfDotArr.length--;    
+        }
+
+        let stringOfArr = rightOfDotArr.join('')
+        integerToReplace = integer.match(/\d*(?![^a-zA-Z\d]\d)\d{3,}(?<![^a-zA-Z\d]\d)/g);
+        let roundedInteger = integer.replace(integerToReplace, stringOfArr)
+       
+       return roundedInteger;
+    }
+
+    tests({
+        'It should round floated integers': function() {
+            let integer = '1.005'
+            let test1 = ToFixedFromString(integer);
+            eq(test1, '1.01')
+            let integerB = '0.615'
+            let test1b = ToFixedFromString(integerB);
+            eq(test1b, '0.62')
+            let integerC = '10.235'
+            let test1C = ToFixedFromString(integerC);
+            eq(test1C, '10.24')
+        },
+        'It should add the decimalNotation to rounded integer': function() {
+            fail();
+        }
+    })
+</script>
