@@ -19,7 +19,9 @@ function ToFixedFromString(integer, decimalNotation) {
     
     // Second step, check if the number to the right of the '.' is >= 5
     // and the number to the left is < 9.
-    if (integer.match(/([0-8]?(?=[^\w]))([^\w]?)([5-9]?)([0-9]+)$/g)) {
+    var isCaseOneTrue = new RegExp('([0-8]?(?=[^\w]))([^\w]?)([5-9]?)([0-9]+)$', 'g')
+
+    if(isCaseOneTrue.test(integer) === true) {
         
         var increaseByOne = function(integer) {
             function increaseMatch(match, p1, p2, p3, p4, offset, string) {
@@ -42,14 +44,12 @@ function ToFixedFromString(integer, decimalNotation) {
             var lastIndexInteger = integer.length - 1
             var positionDecimal = lastIndexInteger - decimalNotation; 
 
-            var fourDigToLeft = new RegExp(/(\d)(\d)(\d)(\d)([^\w]?(?!\d))/, 'g');
-            var threeDigToLeft = new RegExp(/(\d)(\d)(\d)([^\w]?(?!\d))/, 'g');
-
-            if(integer.length === 4){
-                regExp = threeDigToLeft;
-            } else {
-                regExp = fourDigToLeft;
+            var regExpBuilder = ''
+            for(var j = 0; j < lastIndexInteger; j++) {
+                regExpBuilder = regExpBuilder + '(\\d)';
             }
+  
+            var regExp = new RegExp('' + regExpBuilder + '([^\w]?(?!\d))', 'g');  
             
             function dynamicPosition(match, string){
                 var replacerStr = '';
@@ -81,7 +81,7 @@ function ToFixedFromString(integer, decimalNotation) {
 };
 
     tests({
-        'It should round floated integers and add the decimalNotation to the rounded integers': function() {
+        'If the number to the right of the \'.\' is >= 5 and the number to the left is < 9. Round number and add decimalNotation': function() {
             let integer = '1.005'
             let test1 = ToFixedFromString(integer, 2);
             eq(test1, '1.01')
@@ -91,6 +91,9 @@ function ToFixedFromString(integer, decimalNotation) {
             let integerC = '10.235'
             let test1C = ToFixedFromString(integerC, 2);
             eq(test1C, '10.24')
+            let integerD = '0.678'
+            let test1D = ToFixedFromString(integerD, 2);
+            eq(test1D, '0.68')
         }
     })
 
@@ -115,7 +118,7 @@ function ToFixedFromString(integer, decimalNotation) {
     '---------Return the correct result "1.01"-----------'
     '----------------------------------------------------'
     '----------------------------------------------------'
-    '--How to achieve the same with string manupulation?-'
+    '--How to achieve the same with string manipulation?-'
     '----------------------------------------------------'
     let example1 = '1.005';
     let example2 = '0.635';
@@ -160,8 +163,8 @@ function ToFixedFromString(integer, decimalNotation) {
     '----------------------------------------------------'
     '----------------Cases where we have 9---------------'
     '----------------------------------------------------'
-    // I noticed that the rounding cases above, might behave differentely
-    // in case we have 9 to the left of of the '.' and possibily, in 
+    // I noticed that the rounding cases above, might behave different 
+    // in case we have 9 to the left of of the '.' and possibly, in 
     // other positions. 
     // Examples:
     // '109.50' => '110.00'
