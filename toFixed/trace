@@ -40,22 +40,26 @@
 // console.log('-----------------------------------------------------------------')
 // // Scientific Notation
 // 1.005e2 // 1.005 * 10**2
-// Math.round(1.005e2)
-// 101 + 'e-2'
-// Number('101e-2')
-// 1.01.toFixed(2);
-// console.log('-----------------------------------------------------------------')
-// // 10.235.toFixed(2)
+Math.round(1.005e2)
+101 + 'e-2'
+Number('101e-2')
+1.01.toFixed(2);
+console.log('-----------------------------------------------------------------')
+// 10.235.toFixed(2)
 // let result = Math.round(10.235e2)
 // result = result + 'e-2'
 // result = Number(result)
-// result.toFixed(2)
+// result.toFixed(3)
+let result = Math.round(1.005e2)
+result = result + 'e-2'
+result = Number(result)
+result.toFixed(3)
 console.log('-----------------------------------------------------------------')
 // Manipulating Strings
-let stringPrimitive = 'I am a string primitive'
-let stringObject = new String('I am a string object');
-stringPrimitive
-stringObject
+// let stringPrimitive = 'I am a string primitive'
+// let stringObject = new String('I am a string object');
+// stringPrimitive
+// stringObject
 // "1.005" ==> "101"
 // "0.615" ==>  "0.62"
 // "10.235" ==> "10.24"
@@ -90,47 +94,88 @@ var getEach = "1.005"
 //   }
 // });
 
-    function ToFixedTwist(integer, decimalNotation) {
+//     function ToFixedTwist(integer, decimalNotation) {
         
-        if(typeof integer === 'number'){
-            integer = integer.toString();
-        };
+//         if(typeof integer === 'number'){
+//             integer = integer.toString();
+//         };
         
-        var indexDot = integer.indexOf('.');
-        var rightOfDotArr = [];
+//         var indexDot = integer.indexOf('.');
+//         var rightOfDotArr = [];
         
-        let i = indexDot + 1;
-        while( i < integer.length){
-            rightOfDotArr.push(integer[i]);
-            i++;
-        }
+//         let i = indexDot + 1;
+//         while( i < integer.length){
+//             rightOfDotArr.push(integer[i]);
+//             i++;
+//         }
 
-        var lastIndex = rightOfDotArr.length - 1;
-        if(rightOfDotArr[lastIndex] >= 5) {
-            if(rightOfDotArr[lastIndex - 1] < 9) {
-                rightOfDotArr[lastIndex - 1] = eval(rightOfDotArr[lastIndex - 1]) + 1;
-                rightOfDotArr[lastIndex - 1] = rightOfDotArr[lastIndex - 1] + '';
-                rightOfDotArr.length--;
-            } else {
-                rightOfDotArr[lastIndex - 1] = '0';
-                rightOfDotArr.length--;
-            }
-        } else {    
-            rightOfDotArr.length--;    
-        }
-        // let stringOfArr = String(rightOfDotArr)
-       let stringOfArr = rightOfDotArr.join('')
+//         var lastIndex = rightOfDotArr.length - 1;
+//         if(rightOfDotArr[lastIndex] >= 5) {
+//             if(rightOfDotArr[lastIndex - 1] < 9) {
+//                 rightOfDotArr[lastIndex - 1] = eval(rightOfDotArr[lastIndex - 1]) + 1;
+//                 rightOfDotArr[lastIndex - 1] = rightOfDotArr[lastIndex - 1] + '';
+//                 rightOfDotArr.length--;
+//             } else {
+//                 rightOfDotArr[lastIndex - 1] = '0';
+//                 rightOfDotArr.length--;
+//             }
+//         } else {    
+//             rightOfDotArr.length--;    
+//         }
+//         // let stringOfArr = String(rightOfDotArr)
+//        let stringOfArr = rightOfDotArr.join('')
 
-        integerToReplace = integer.match(/[\d]{1,}(?![^a-zA-Z\d])(?<![^a-zA-Z\d])/g);
-        let roundedInteger = integer.replace(integerToReplace, stringOfArr)
+//         integerToReplace = integer.match(/[\d]{1,}(?![^a-zA-Z\d])(?<![^a-zA-Z\d])/g);
+//         let roundedInteger = integer.replace(integerToReplace, stringOfArr)
 
-        // if(rightOfDot[rightOfDot.length - 2] >= 5)
-       return roundedInteger;
-        // return integer
-    }
+//         // if(rightOfDot[rightOfDot.length - 2] >= 5)
+//        return roundedInteger;
+//         // return integer
+//     }
+
+
+// function ToFixedTwist(integer, decimalNotation) {
+
+//     if(typeof integer === 'number'){
+//         integer = integer.toString();
+//     };
+//     // const indexDot = integer.indexOf('.');
+//     // const rightOfDot = integer.substring(indexDot + 1)
+//     // const leftOfDot = integer.substring(0, indexDot)
+//     let integerNoDot = integer //leftOfDot + rightOfDot;
     
-    ToFixedTwist('1.005')
+//     const lastDigitBiggerThan5 = /[5-8]?$/g;
+//     const lastDigitSmallerThan5 = /[0-4]?$/g;
+//     const lastDigit9 = /9?$/g;
    
+//     if(integerNoDot.test(lastDigitBiggerThan5) === true){
+//       let secondToLastPlusOne = integerNoDot.match(secondToLast).toString();
+//       secondToLastPlusOne = eval( secondToLastPlusOne) + 1; 
+//       integerNoDot = integerNoDot.replace(secondToLast, secondToLastPlusOne)
+//       integerNoDot = integerNoDot.replace(lastDigit, '')
+//     } else{
+//       // integerNoDot = Number(integerNoDot);
+//       // integerNoDot = integerNoDot + 'e2';
+//       // integerNoDot = Math.round(integerNoDot);
+//       // integerNoDot = integerNoDot + 'e-2';
+//       // integerNoDot = Number(integerNoDot);
+//       // integerNodot = integerNoDot.toFixed();
+//     }
+   
+    
+
+//     // if(rightOfDot[rightOfDot.length - 2] >= 5)
+//    return integerNoDot;
+//     // return integer
+// }
+// ToFixedTwist(1.005)
+// ToFixedTwist('0.615')
+// ToFixedTwist('10.235')
+// ToFixedTwist('10.232')
+// result;
+// result = result + 'e-2'
+// result = Number(result)
+// result.toFixed(2)
 
 
 
