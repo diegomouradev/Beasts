@@ -1,0 +1,29 @@
+{
+  "name": "nested-todos",
+  "version": "0.0.1",
+  "description": "Demo for TodoMVC jQuery",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.12.4"
+  },
+  "engines": {
+    "node": "4.4.5"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n/a.git"
+  },
+  "keywords": [
+    "todomvc",
+    "nested-todos"
+  ],
+  "author": "Diego Moura",
+  "bugs": {
+    "url": "https://github.com/n/a/issues"
+  },
+  "homepage": "https://github.com/n/a#readme"
+}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" data-framework="jquery">
+	<head>
+		<meta charset="utf-8">
+		<title>nestedTodos</title>
+		<link rel="stylesheet" href="/nestedTodos/public/css/index.css">
+		<link rel="stylesheet" href="/nestedTodos/public/css/app.css">
+	</head>
+	<body>
+		<section id="todoapp">
+			<header id="header">
+				<h1>nestedTodos</h1>
+				<input id="new-todo" placeholder="What needs to be done?" autofocus>
+			</header>
+			<section id="main">
+				<input id="toggle-all" type="checkbox">
+				<label for="toggle-all">Mark all as complete</label>
+				<ul id="todo-list"></ul>
+				<input id="new-nested-todo" class="new-nested-todo" placeholder="What needs to be done?" autofocus>
+			</section>
+			<footer id="footer"></footer>
+		</section>
+		<footer id="info">
+			<p>Double-click to edit a todo</p>
+			<p>Created by <a href="http://sindresorhus.com">Sindre Sorhus</a></p>
+			<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+		</footer>
+		<script src="/nestedTodos/public/js/director.js"></script>
+		<script src="/nestedTodos/public/js/app.js"></script>
+	</body>
+</html>

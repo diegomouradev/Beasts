@@ -1,18 +1,19 @@
-// let integerOne = 1.005;
+
 // integerOne.toFixed(2);
 // console.log('----------------------------------------------------')
 // console.log('----------------Should return "1.01"----------------')
 // console.log('----------------------------------------------------')
-// console.log('Step 1 = integerOne * 100')
-// integerOne = integerOne * 100; 
-// console.log('Step 2 = integerOne.toFixed(2)')
-// integerOne = integerOne.toFixed(2);
-// console.log('Step 3 = Math.round()')
-// integerOne = Math.round(integerOne);
-// console.log('Step 4 = / 100')
-// integerOne = integerOne / 100;
-// console.log('Step 5 = .toFixed(2) again')
-// integerOne = integerOne.toFixed(2);
+let integerOne = 10.235;
+console.log('Step 1 = integerOne * 100')
+integerOne = integerOne * 100; 
+console.log('Step 2 = integerOne.toFixed(2)')
+integerOne = integerOne.toFixed(2);
+console.log('Step 3 = Math.round()')
+integerOne = Math.round(integerOne);
+console.log('Step 4 = / 100')
+integerOne = integerOne / 100;
+console.log('Step 5 = .toFixed(2) again')
+integerOne = integerOne.toFixed(2);
 // console.log('----------------------------------------------------')
 // console.log('---------Return the correct result "1.01"-----------')
 // console.log('----------------------------------------------------')
@@ -94,70 +95,70 @@
 // // the last number after the '.', like in the example bellow.
 //   // integerOne = integerOne.toFixed(3);
 //   // result => '1.010'
-'----------------------------------------------------'
-'-------------------Implementation-------------------'
-'----------------------------------------------------'
-// First step: Move the '.' using regexp, replace.
-  //Example:
-  // /([^\w])(\d{2}(?=\d))/g
-let integer = '1.005'.replace(/([^\w])(\d{2}(?=\d))/g, '$2$1');
-// Second step:
-  // If number to the right of the '.' is > 5
-  // and number to the left is < 9
-  // Take the number to the left and increase by 1.
-      // We can achieve that by creating a function.
-function increaseByOne(integer) {
-  function increaseMatch(match, p1, p2, p3, p4, offset, string) {
-    p1 = (Number(p1) + 1) + '';
-    p4 = (Number(p4) - Number(p4)) + '';
+// '----------------------------------------------------'
+// '-------------------Implementation-------------------'
+// '----------------------------------------------------'
+// // First step: Move the '.' using regexp, replace.
+//   //Example:
+//   // /([^\w])(\d{2}(?=\d))/g
+// let integer = '1.005'.replace(/([^\w])(\d{2}(?=\d))/g, '$2$1');
+// // Second step:
+//   // If number to the right of the '.' is > 5
+//   // and number to the left is < 9
+//   // Take the number to the left and increase by 1.
+//       // We can achieve that by creating a function.
+// function increaseByOne(integer) {
+//   function increaseMatch(match, p1, p2, p3, p4, offset, string) {
+//     p1 = (Number(p1) + 1) + '';
+//     p4 = (Number(p4) - Number(p4)) + '';
     
-    if(p4 === '0') {
-      return p1 + p2 + p3;
-    } else {
-      return p1 + p2 + p3 + p4;
-    };
-  };
-return integer.replace(/([0-8]?(?=[^\\w]))([^\\w]?)([5-9]?)([0-9]+)$/g, increaseMatch);
-};
-let newInteger = increaseByOne('100.5')
-newInteger;
-// Note that I added the if statement before returning, that will eliminate
-// the number to the right of the '.' if it's equal to '0'.
+//     if(p4 === '0') {
+//       return p1 + p2 + p3;
+//     } else {
+//       return p1 + p2 + p3 + p4;
+//     };
+//   };
+// return integer.replace(/([0-8]?(?=[^\\w]))([^\\w]?)([5-9]?)([0-9]+)$/g, increaseMatch);
+// };
+// let newInteger = increaseByOne('100.5')
+// newInteger;
+// // Note that I added the if statement before returning, that will eliminate
+// // the number to the right of the '.' if it's equal to '0'.
 
-// Third step:
-  //is to move the decimal according to the decimalNotation argument.
-  // We can achieve that with a little twist to the regexp used on step 1.
-  // /(\d)(\d)(\d)([^\w]?(?!\d))/g
-// newInteger = newInteger.replace(/(\d)(\d)(\d)([^\w]?(?!\d))/g, '$1$4$2$3')
-// Now how can we make this into a dynamic function that would take the 
-// decimal Notation and position the '.' correctly?
+// // Third step:
+//   //is to move the decimal according to the decimalNotation argument.
+//   // We can achieve that with a little twist to the regexp used on step 1.
+//   // /(\d)(\d)(\d)([^\w]?(?!\d))/g
+// // newInteger = newInteger.replace(/(\d)(\d)(\d)([^\w]?(?!\d))/g, '$1$4$2$3')
+// // Now how can we make this into a dynamic function that would take the 
+// // decimal Notation and position the '.' correctly?
 
-// Coming from step 2, we know that the '.' is the last character in the string.
-function moveDecimal(integer, decimalNotation) {
-  // integer = '101.' .length === 3
-  // decimalNotation = 2;
-  let lastIndexInteger = integer.length - 1
-  let positionDecimal = lastIndexInteger - decimalNotation; // position 1
+// // Coming from step 2, we know that the '.' is the last character in the string.
+// function moveDecimal(integer, decimalNotation) {
+//   // integer = '101.' .length === 3
+//   // decimalNotation = 2;
+//   let lastIndexInteger = integer.length - 1
+//   let positionDecimal = lastIndexInteger - decimalNotation; // position 1
   
-  function dynamicPosition(match, p1, p2, p3, p4, string){
-    var replacerStr = '';
-    for(let i = 0; i < match.length - 1; i++) {
-      if (i !== positionDecimal) {
-       replacerStr = replacerStr + ('$' + ((i + 1)));
-      } else if(i === positionDecimal){
-        if(match[i] !== '.') {
-         let newP = ('$' + ((i + 1)));
-         let newP2 = '$4'
-         replacerStr = replacerStr + newP2 + newP;
-        }
-      }
-    }
-    return replacerStr;
-  }
-let returnedStr = integer.replace(/(\d)(\d)(\d)([^\w]?(?!\d))/g, dynamicPosition);
-return integer.replace(/(\d)(\d)(\d)([^\w]?(?!\d))/g, returnedStr);
-}
+//   function dynamicPosition(match, p1, p2, p3, p4, string){
+//     var replacerStr = '';
+//     for(let i = 0; i < match.length - 1; i++) {
+//       if (i !== positionDecimal) {
+//        replacerStr = replacerStr + ('$' + ((i + 1)));
+//       } else if(i === positionDecimal){
+//         if(match[i] !== '.') {
+//          let newP = ('$' + ((i + 1)));
+//          let newP2 = '$4'
+//          replacerStr = replacerStr + newP2 + newP;
+//         }
+//       }
+//     }
+//     return replacerStr;
+//   }
+// let returnedStr = integer.replace(/(\d)(\d)(\d)([^\w]?(?!\d))/g, dynamicPosition);
+// return integer.replace(/(\d)(\d)(\d)([^\w]?(?!\d))/g, returnedStr);
+// }
 
-moveDecimal('101.', 2);
-// While thinking about the function above. I remember there is a way of
-// dynamically generate RegExp. 
+// moveDecimal('101.', 2);
+// // While thinking about the function above. I remember there is a way of
+// // dynamically generate RegExp. 

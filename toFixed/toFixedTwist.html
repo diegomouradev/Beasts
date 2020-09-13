@@ -12,7 +12,7 @@
     // "0.615" ==>  "0.62"
     // "10.235" ==> "10.24"
 
-function ToFixedFromString(integer, decimalNotation) {
+function toFixedFromString(integer, decimalNotation) {
 
     // First step, move the '.' 2 decimal points to the right.
     integer = integer.replace(/([^\w])(\d{2}(?=\d))/g, '$2$1');
@@ -83,16 +83,16 @@ function ToFixedFromString(integer, decimalNotation) {
     tests({
         'If the number to the right of the \'.\' is >= 5 and the number to the left is < 9. Round number and add decimalNotation': function() {
             let integer = '1.005'
-            let test1 = ToFixedFromString(integer, 2);
+            let test1 = toFixedFromString(integer, 2);
             eq(test1, '1.01')
             let integerB = '0.615'
-            let test1b = ToFixedFromString(integerB, 2);
+            let test1b = toFixedFromString(integerB, 2);
             eq(test1b, '0.62')
             let integerC = '10.235'
-            let test1C = ToFixedFromString(integerC, 2);
+            let test1C = toFixedFromString(integerC, 2);
             eq(test1C, '10.24')
             let integerD = '0.678'
-            let test1D = ToFixedFromString(integerD, 2);
+            let test1D = toFixedFromString(integerD, 2);
             eq(test1D, '0.68')
         }
     })
