@@ -49,60 +49,69 @@ function nestedTodoApp(){
   var Build = {
     todoTemplate: function() {
       todosCollection.innerHTML = '';
-      App.todos.forEach( function(todos) {
-        if(App.todos.hasChildren === true) {
+      App.todos.forEach( function(todo) {
+        if(todo.hasChildren === true) {
           var todoTemplate = 
-          `<li id="${todos.id}" ${todos.isTodoCompleted ? 'class="completed"' : ""}>
+          `<li id="${todo.id}" ${todo.isTodoCompleted ? 'class="completed"' : ""}>
             <div class="view">
               <div class="toggle-container">
               
-              <input id="toggle" class="toggle" type="checkbox" ${todos.isTodoCompleted ? "checked" : ""}>
+              <input id="toggle" class="toggle" type="checkbox" ${todo.isTodoCompleted ? "checked" : ""}>
               
               </div>
-              <label class="todo-value">${todos.todoValue}</label>
+              <label class="todo-value">${todo.todoValue}</label>
               
               <button class="add-nested-todo"></button>
               <button class="destroy"></button>
             </div>
-            <input class="edit" value="${todos.todoValue}">
-          </li>`;
-          var todoChildrenTemplate = 
-          `<li id="${todos.children.id}" ${todos.children.isTodoCompleted ? 'class="completed"' : ""}>
-            <div class="view">
-              <div class="toggle-container">
-              
-              <input id="toggle" class="toggle" type="checkbox" ${todos.children.isTodoCompleted ? "checked" : ""}>
-              
-              </div>
-              <label class="todo-value">${todos.children.todoValue}</label>
-              
-              <button class="add-nested-todo"></button>
-              <button class="destroy"></button>
-            </div>
-            <input class="edit" value="${todos.children.todoValue}">
+            <input class="edit" value="${todo.todoValue}">
           </li>`;
           todosCollection.insertAdjacentHTML("beforeend", todoTemplate);
-          todosCollection.insertAdjacentHTML("beforeend", todoChildrenTemplate);
+          var todoChildren = Object.entries(todo.children);
+          builtChildrenTemplate = 
+          todoChildren.forEach(function (child){
+            for(let i = 0; i < child.length; i++) {
+              if(typeof child[i] === Object) {
+                var todoChildrenTemplate = 
+                `<li id="${child[i].id}" ${child[i].isTodoCompleted ? 'class="completed"' : ""}>
+                <div class="view">
+                  <div class="toggle-container">
+                  
+                  <input id="toggle" class="toggle" type="checkbox" ${child[i].isTodoCompleted ? "checked" : ""}>
+                  
+                  </div>
+                  <label class="todo-value">${child[i].todoValue}</label>
+                  
+                  <button class="add-nested-todo"></button>
+                  <button class="destroy"></button>
+                </div>
+                <input class="edit" value="${child[i].todoValue}">
+              </li>`;
+              return todoChildrenTemplate;
+              };
+            };
+            
+            todosCollection.insertAdjacentHTML("beforeend", todoChildrenTemplate);
+          });
         } else {
           var todoTemplate = 
-          `<li id="${todos.id}" ${todos.isTodoCompleted ? 'class="completed"' : ""}>
+          `<li id="${todo.id}" ${todo.isTodoCompleted ? 'class="completed"' : ""}>
             <div class="view">
               <div class="toggle-container">
               
-              <input id="toggle" class="toggle" type="checkbox" ${todos.isTodoCompleted ? "checked" : ""}>
+              <input id="toggle" class="toggle" type="checkbox" ${todo.isTodoCompleted ? "checked" : ""}>
               
               </div>
-              <label class="todo-value">${todos.todoValue}</label>
+              <label class="todo-value">${todo.todoValue}</label>
               
               <button class="add-nested-todo"></button>
               <button class="destroy"></button>
             </div>
-            <input class="edit" value="${todos.todoValue}">
+            <input class="edit" value="${todo.todoValue}">
           </li>`;
           todosCollection.insertAdjacentHTML("beforeend", todoTemplate);
         }
-      
-        
+
       });
     },
     footerTemplate: function() {
@@ -232,7 +241,7 @@ function nestedTodoApp(){
         todoValue: newTodoValue,
         isTodoCompleted: false,
         hasChildren: false,
-        children: ""
+        children: {}
       });
 
       inputNewTodo.value = '';
@@ -257,9 +266,9 @@ function nestedTodoApp(){
         todoValue: newNestedTodoValue,
         isTodoCompleted: false,
         hasChildren: false,
-        children: ""
+        children: {}
       }
-      parentTodo.children = newNestedTodo;
+      parentTodo.children.newNestedTodo = newNestedTodo;
       parentTodo.hasChildren = true;
 
       inputNewNestedTodo.value = '';
