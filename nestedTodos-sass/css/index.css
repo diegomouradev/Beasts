@@ -186,38 +186,8 @@ input[type="checkbox"] {
 
 
 
-label[for='toggle-all'] {
-	display: none;
-}
 
-.toggle-all {
-	position: absolute;
-	top: 205px;
-	left: 100px;
-	width: 60px;
-	height: 34px;
-	text-align: center;
-	border: none; /* Mobile Safari */
-}
 
-.toggle-all:before {
-	content: '❯';
-	font-size: 22px;
-	color: #e6e6e6;
-	padding: 10px 27px 10px 27px;
-}
-
-.toggle-all:checked:before {
-	color: #737373;
-}
-
-h1{
-	font-family: 'Open Sans', sans-serif;
-	font-size: 60px;
-	font-weight: 700;
-	text-align: center;
-	color: rgba(223,205,187,1);
-}
 
 .footer{
 	grid-column: 2 / 3;

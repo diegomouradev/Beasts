@@ -1,0 +1,8 @@
+.subtask-adding-view {
+    display: none;
+}
+
+.subtask-adding-view.on {
+    display: block;
+}
+

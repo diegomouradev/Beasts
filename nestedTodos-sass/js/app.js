@@ -1,13 +1,12 @@
 function nestedTodoApp(){
   var ENTER_KEY = 13;
   var ESCAPE_KEY = 27;
-  var inputNewTodo = document.getElementById("new-todo");
-  var inputNewNestedTodo = document.querySelector(".new-nested-todo");
-  var parentTodo;
-  var toggleAllTodosCompleted = document.getElementById("toggle-all");
-  var deleteCompletedTodos = document.getElementById("footer");
-  var todosCollection = document.getElementById("todo-list");
-  var footerDomElement = document.getElementById("footer");
+
+  const addTodos = document.querySelector(".new-todo-form")
+  var todosCollection = document.querySelector(".todos-collection");
+
+  
+  const deleteCompletedTodos = document.querySelector(".footer");
 
   var utilities = {
     idGenerator: function() {
@@ -48,65 +47,33 @@ function nestedTodoApp(){
 
   var Build = {
     todoTemplate: function() {
-
-      todosCollection.innerHTML = '';
-
-      App.todos.forEach(function(todo) {
-
-        var todoTemplate = 
-        `<li id="${todo.id}" ${todo.isTodoCompleted ? 'class="completed"' : ""}>
-          <div class="view">
-            <div class="toggle-container">
-            <input id="toggle" class="toggle" type="checkbox" ${todo.isTodoCompleted ? "checked" : ""}>
-            </div>
+      const template = App.todos.map(function(todo) {
+        return `<li id="${todo.id}" ${todo.isTodoCompleted ? 'class="completed"' : ""}>
+          <div class="todo-container">
+            <input class="toggle-todo" type="checkbox" ${todo.isTodoCompleted === true ? "checked" : ""}>
             <label class="todo-value">${todo.todoValue}</label>
-            <button class="add-nested-todo"></button>
-            <button class="destroy"></button>
+            <button class="add-todo"></button>
+            <button  class="delete-todo"></button>
           </div>
-          <input class="new-nested-todo" placeholder="What needs to be done?">
-          <input class="edit" value="${todo.todoValue}">
-          <ul id="todo-collection-${todo.id}"></ul>
-        </li>`;
+          <form class="nested-todo-form">
+            <input type="text" class="new-nested-todo" name="${todo.id}" placeholder="Let's break it into smaller pieces!" autofocus required>
+            <input type="submit" value="+ Add Subtask">
+          </form>
+          <form class="edit-form">
+            <input type="text" class="edit-input-field" name="edit-input" value="${todo.todoValue}" autofocus>
+            <input type="submit" value="Updated">
+            <input type="submit" value="Never mind!">
+          </form>
+          <ul id="nested-todo-collection--${todo.id}" class="nested-collection">
+          ${todo.haschildren ? '' + Build.todoTemplate(todo.children) + '' : ''}
+          </ul>
+        </li>`;}).join('');
 
-        todosCollection.insertAdjacentHTML("beforeend", todoTemplate);
-        this.todoUlDOMElement = document.querySelector('[id^=todo-collection-]');
-        
-        if(todo.hasChildren) {
-          Build.childrenTemplate(todo, todoUlDOMElement);
-        }
-      });
-
+      todosCollection.insertAdjacentHTML('beforeend', template);
       utilities.localStorageManager("todos", this.todos);
     },
     childrenTemplate: function(todo, todoUlDOMElement) {
-
-      todo.children.forEach(function (todo){
-        
-        var todoChildrenTemplate = 
-        `<li id="${todo.id}" ${todo.isTodoCompleted ? 'class="completed"' : ""}>
-          <div class="view">
-            <div class="toggle-container">
-              <input id="toggle" class="toggle" type="checkbox" ${todo.isTodoCompleted ? "checked" : ""}>
-            </div>
-            <label class="todo-value">${todo.todoValue}</label>
-            <button class="add-nested-todo"></button>
-            <button class="destroy"></button>
-          </div>
-          <input class="new-nested-todo" placeholder="What needs to be done?" autofocus>
-          <input class="edit" value="${todo.todoValue}">
-          <ul id="todo-collection-${todo.id}"></ul>
-        </li>`;
-          
-        this.todoUlDOMElement.insertAdjacentHTML("beforeend", todoChildrenTemplate);
-        this.todoUlDOMElement = document.getElementById('[id^=todo-collection-]');
-        
-        if(todo.hasChildren) {
-          Build.childrenTemplate(todo, todoUlDOMElement);
-        }
-
-      });
-
-      utilities.localStorageManager("todos", this.todos);
+    
     },
     footerTemplate: function() {
       var totalTodosCount = App.todos.length;
@@ -121,21 +88,18 @@ function nestedTodoApp(){
       footerDomElement.innerHTML = "";
 
       var footerTemplate = 
-      `<span id="todo-count"><strong>${footerInfo.todosPerCompleteCount}</strong> ${footerInfo.todosPerCompleteWord} left</span>
-        <ul id="filters">
-          <li>
-            <a ${footerInfo.filter === "all" ? 'class="selected"' : ""} href="#/all">All</a>
-          </li>
-          <li>
-            <a ${footerInfo.filter === "active" ? 'class="selected"' : ""} href="#/active">Active</a>
-          </li>
-          <li>
-            <a ${footerInfo.filter === "completed" ? 'class="selected"' : ""} href="#/completed">Completed</a>
-          </li>
-        </ul>
-          ${footerInfo.completedTodosTotal > 0 ? '<button id="clear-completed">Clear completed</button>' : "" }`;
+      `<span id="todo-count" class="todoapp-footer__counter">
+      <strong>${footerInfo.todosPerCompleteCount}</strong> ${footerInfo.todosPerCompleteWord} left
+    </span>
+    <ul id="filters" class="todoapp-footer__filters">
+      <li> <a ${footerInfo.filter === "all" ? 'class="selected"' : ""} href="#/all">All</a></li>
+      <li><a ${footerInfo.filter === "active" ? 'class="selected"' : ""} href="#/active">Active</a></li>
+      <li><a ${footerInfo.filter === "completed" ? 'class="selected"' : ""} href="#/completed">Completed</a></li>
+    </ul>
+    ${footerInfo.completedTodosTotal > 0 ? '<button id="clear-completed">Clear completed</button>' : "" }`;
 
       footerDomElement.insertAdjacentHTML("beforeend", footerTemplate);
+      App.setupEvents();
     },
     pluralizeTodoCount: function(todosPerCompleteCount, word) {
       return todosPerCompleteCount === 1 ? word : word + "s";
@@ -149,7 +113,6 @@ function nestedTodoApp(){
       if(this.todos.length > 0) {
         Build.todoTemplate();
         this.setupEvents();
-        
       } else {
         this.setupEvents();
       };
@@ -163,32 +126,37 @@ function nestedTodoApp(){
 
     },
     setupEvents: function() {
-      inputNewTodo.addEventListener("keyup", this.createNewTodo.bind(this));
-      toggleAllTodosCompleted.addEventListener("change", this.toggleAllTodosCompleted.bind(this));
+
+      addTodos.addEventListener('submit', this.createNewTodo.bind(this));
+
       deleteCompletedTodos.addEventListener('click', function(e) {
         if (e.target.id.toLowerCase() === 'clear-completed') App.deleteCompletedTodos(e);
       });
 
-      todosCollection.addEventListener('click', function(e) {
-        if (e.target.className === "add-nested-todo" && e.detail === 1)  App.setupNewNestedTodo(e);
-      });
-
-      todosCollection.addEventListener("keyup", this.createNewNestedTodo.bind(this));
-
       todosCollection.addEventListener('change', function(e) {
-        if (e.target.className.toLowerCase() === "toggle") App.toggleTodoCompleted(e);
-      });
-      todosCollection.addEventListener('click', function(e) {
-        if (e.target.className === "destroy" && e.detail === 1)  App.deleteTodo(e);
+        if (e.target.className.toLowerCase() === ".toggle-todo") App.toggleTodoCompleted(e);
       });
 
       todosCollection.addEventListener('dblclick', function(e) {
         if (e.target.tagName.toLowerCase() === 'label' && e.detail === 2) App.setUpdateTodoInterface(e);
       });
+
+      todosCollection.addEventListener('click', function(e) {
+        if (e.target.closest(".delete-todo") && e.detail === 1)  App.deleteTodo(e);
+      });
+
+      todosCollection.addEventListener("keyup", function(e) {
+       if (e.target.className.toLowerCase() === "nested-input-field nested-input-field-on") App.createNewNestedTodo(e);
+      });
+
+      todosCollection.addEventListener('submit', function(e) {
+        if (e.target.closest(".add-todo") && e.detail === 1)  App.setupNewNestedTodo(e);
+      });
+
       todosCollection.addEventListener('keyup', this.setUpdateEventAttribute.bind(this));
 
       todosCollection.addEventListener('focusout', function(e) {
-        if (e.target.className.toLowerCase() === 'edit') App.updateTodo(e);
+        if (e.target.className.toLowerCase() === 'edit-input-field') App.updateTodo(e);
       });
   
     },
@@ -219,48 +187,48 @@ function nestedTodoApp(){
       var todosTotalCount = this.todos.length;
 
       if (todosTotalCount > 0) {
-        footerDomElement.style.display = "block";
+        footerDomElement.style.display = "grid";
       } else {
         footerDomElement.style.display = "none";
       }
     },
     createNewTodo: function(e) {
-      var newTodoInputField = e.target;
-      var newTodoValue = newTodoInputField.value;
+      e.preventDefault();
+      const todoInput = document.querySelector('[name=new-todo]');
+      var inputValue = todoInput.value;
       
-      if (e.which !== ENTER_KEY || !newTodoValue) {
-        return;
-      }
-
       this.todos.push({
         id: utilities.idGenerator(),
-        todoValue: newTodoValue,
+        todoValue: inputValue,
         isTodoCompleted: false,
         hasChildren: false,
         children: []
       });
 
-      inputNewTodo.value = '';
-      
+      Build.todoTemplate();
+      document.querySelector('new-todo-form').reset();
       this.renderTodosTemplate();
     },
     setupNewNestedTodo: function(e) {
-      var inputNewNestedTodo = document.querySelector(".new-nested-todo");
-      inputNewNestedTodo.classList.add("create-nested-todo");
-      parentTodo = this.todos[utilities.matchTodoIdWithTodoIndex(e)];
+      var liElement = e.target.closest("li");
+      var nestedTodoInputField = liElement.querySelector(".nested-input-field");
+      nestedTodoInputField.classList.add("nested-input-field-on");
       
+      parentTodo = this.todos[utilities.matchTodoIdWithTodoIndex(e)];
+      return;
     },
     createNewNestedTodo: function(e) {
-      var newNestedTodoInputField = e.target;
-      var newNestedTodoValue = newNestedTodoInputField.value;
+      e.preventDefault();
+      const todoInput = document.querySelector('[name=' + '' + new-todo]');
+      var inputValue = todoInput.value;
       
-      if (e.which !== ENTER_KEY || !newNestedTodoValue) {
+      if (e.which !== ENTER_KEY || !nestedTodoValue) {
         return;
       }
 
       parentTodo.children.push({
         id: utilities.idGenerator(),
-        todoValue: newNestedTodoValue,
+        todoValue: nestedTodoValue,
         isTodoCompleted: false,
         hasChildren: false,
         children: []
@@ -268,16 +236,16 @@ function nestedTodoApp(){
       
       parentTodo.hasChildren = true;
 
-      inputNewNestedTodo.value = '';
-      inputNewNestedTodo.classList.remove('create-nested-todo');
+      nestedTodoInputField.value = '';
+      nestedTodoInputField.classList.remove('nested-input-field-on');
       
       this.renderTodosTemplate();
     },
     setUpdateTodoInterface: function(e) {
-      var todoDOMElement = e.target.closest("li");
-      todoDOMElement.classList.add("editing");
-      var todoDOMElementInputField = todoDOMElement.querySelector(".edit");
-      todoDOMElementInputField.focus();
+      var liElement = e.target.closest("li");
+      liElement.classList.add("editing-mode-on");
+      var updateInputField = liElement.querySelector(".edit-input-field");
+      updateInputField.focus();
     },
     setUpdateEventAttribute: function(e) {
       if (e.which === ENTER_KEY) {
@@ -291,18 +259,18 @@ function nestedTodoApp(){
       }
     },
     updateTodo: function(e) {
-      var todoDOMElement = e.target;
-      var todoDOMElementValue = todoDOMElement.value.trim();
+      var todoEditInputElement = e.target;
+      var editInputValue = todoEditInputElement.value.trim();
 
-      if (!todoDOMElementValue && todoDOMElement === "input.edit") {
+      if (!editInputValue && todoEditInputElement === ".edit-input-field") {
         this.deleteTodo(e);
         return;
       }
 
-      if (todoDOMElement.getAttribute("abort") === true) {
-        todoDOMElement.setAttribute("abort", false);
+      if (todoEditInputElement.getAttribute("abort") === true) {
+        todoEditInputElement.setAttribute("abort", false);
       } else {
-        this.todos[utilities.matchTodoIdWithTodoIndex(e)].todoValue = todoDOMElementValue;
+        this.todos[utilities.matchTodoIdWithTodoIndex(e)].todoValue = editInputValue;
       }
 
       this.renderTodosTemplate();
