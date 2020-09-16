@@ -72,23 +72,53 @@ var app = {
         
         templateBuilder.todoItems();
     },
-    addSubtask: function(path, subtaskValue) {
+    // addSubtask: function(path, subtaskValue) {
 
-        this.todos[path[0]].children[path[1]].children.push({
-            id: utilities.idGenerator(),
-            parentLocation: 'collection-' + this.todos[path[0]].children[path[1]].id,
-            value: subtaskValue,
-            completed: false,
-            hasChildren: false,
-            children: []
-        });
+    //     this.todos[path[0]].children[path[1]].children.push({
+    //         id: utilities.idGenerator(),
+    //         parentLocation: 'collection-' + this.todos[path[0]].children[path[1]].id,
+    //         value: subtaskValue,
+    //         completed: false,
+    //         hasChildren: false,
+    //         children: []
+    //     });
         
-        if(this.todos[path[0]].children[path[1]].hasChildren === false){
-            this.todos[path[0]].children[path[1]].hasChildren = !this.todos[path[0]].children[path[1]].hasChildren;
-        };
+    //     if(this.todos[path[0]].children[path[1]].hasChildren === false){
+    //         this.todos[path[0]].children[path[1]].hasChildren = !this.todos[path[0]].children[path[1]].hasChildren;
+    //     };
         
+    //     templateBuilder.todoItems();
+
+    // },
+    addSubtask: function(parentId, subtaskValue, arr) {
+        
+        if(arguments[2] === undefined) {
+            var arr = this.todos;
+        }
+
+        for( let i = 0; i < arr.length; i++) {
+        
+            if(parentId === arr[i].id) {
+
+                arr[i].children.push({
+                    id: utilities.idGenerator(),
+                    parentLocation: 'collection-' + arr[i].id,
+                    value: subtaskValue,
+                    completed: false,
+                    hasChildren: false,
+                    children: []
+                });
+
+                if(arr[i].hasChildren === false){
+                    arr[i].hasChildren = !arr[i].hasChildren;
+                };
+
+            } else if( arr[i].hasChildren === true) {
+                var arr = arr[i].children;
+                this.addSubtask(parentId, subtaskValue, arr);
+            };
+        }   
         templateBuilder.todoItems();
-
     }
 };
 var eventHandler = {
@@ -121,7 +151,7 @@ var eventHandler = {
         var subtaskInput = parentLi.querySelector('[name=subtask-input]');
         var subtaskValue = subtaskInput.value.trim();
         
-        app.addSubtask(path, subtaskValue);
+        app.addSubtask(parentId, subtaskValue);
     },
 };
 
