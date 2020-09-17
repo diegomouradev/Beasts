@@ -123,9 +123,13 @@ var eventHandler = {
         templateBuilder.todoItems();
     },
     editTask: function(e) {
-        var parentLi = e.target.closes('li');
+        var parentLi = e.target.closest('li');
         var parentLiId = parentLi.id;
         var parentObjId = parentLiId;
+
+        var editedValue = parentLi.querySelector('[name=edit-task-input]');
+        editedValue = editedValue.value;
+
         var arr = App.todos;
         App.editTask(arr, parentObjId);
     }
