@@ -6,3 +6,19 @@
     display: block;
 }
 
+.edit-task-view {
+    display: none;
+}
+
+.task-list-item.editing-on .edit-task-view.on {
+    display: block;
+}
+
+.task-list-item .todo-view {
+    display: block;
+}
+
+.task-list-item.editing-on .todo-view {
+    display: none;
+}
+

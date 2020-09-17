@@ -1,4 +1,3 @@
-
 var utilities = {
     idGenerator: function() {
         var i, randomNumber;
@@ -23,45 +22,15 @@ var utilities = {
             var store = localStorage.getItem(namespace);
             return (store && JSON.parse(store)) || [];
         }
-    },
-    // getIndexFromId: function(e) { /* Review if this method can work with the recursive method. If so, delete this method */
-    //     var todoId = e.target.closest('li').id;
-    //     var todosIndex = app.todos.length;
-        
-
-    //     while (todosIndex--) {
-    //       if (app.todos[todosIndex].id === todoId) {
-    //         return todosIndex;
-    //       }
-    //     }
-    // },
-    // buildPathPush: function(parentId, arr) { /* Review if this method is needed. If not, delete this method */
-    //     var indexes = [];
-
-    //     for( let i = 0; i < arr.length; i++) {
-        
-    //         if(parentId === arr[i].id) {
-    //             return i;
-
-    //         } else if( arr[i].hasChildren === true) {
-    //             indexes.push([i]);
-    //             utilities.buildPathPush(parentId, arr[i].children);
-    //             indexes.push([i]);
-    //         };
-
-    //     }   
-        
-    //     return indexes;
-    // }
+    }
 };
-var app = {
+var App = {
     initialize: function() {
         this.todos = utilities.storageManager('todos');
         eventHandler.setupEventListeners();
         templateBuilder.todoItems();
     },
-    addTodo: function(inputValue){
-        
+    addTask: function(inputValue){
         this.todos.push({
             id: utilities.idGenerator(),
             value: inputValue,
@@ -69,87 +38,46 @@ var app = {
             hasChildren: false,
             children: []
         });
-        
-        templateBuilder.todoItems();
     },
-    // addSubtask: function(path, subtaskValue) {
-
-    //     this.todos[path[0]].children[path[1]].children.push({
-    //         id: utilities.idGenerator(),
-    //         parentLocation: 'collection-' + this.todos[path[0]].children[path[1]].id,
-    //         value: subtaskValue,
-    //         completed: false,
-    //         hasChildren: false,
-    //         children: []
-    //     });
-        
-    //     if(this.todos[path[0]].children[path[1]].hasChildren === false){
-    //         this.todos[path[0]].children[path[1]].hasChildren = !this.todos[path[0]].children[path[1]].hasChildren;
-    //     };
-        
-    //     templateBuilder.todoItems();
-
-    // },
-    addSubtask: function(parentId, subtaskValue, arr) {
-        
-        if(arguments[2] === undefined) {
-            var arr = this.todos;
-        }
-
-        for( let i = 0; i < arr.length; i++) {
-        
-            if(parentId === arr[i].id) {
-
-                arr[i].children.push({
+    addSubtask: function(arr, parentObjId, subtaskValue) {
+        for ( var i = 0; i < arr.length; i++) {
+            var todo = arr[i];
+            if (todo.id === parentObjId) {
+                todo.children.push({
                     id: utilities.idGenerator(),
-                    parentLocation: 'collection-' + arr[i].id,
                     value: subtaskValue,
                     completed: false,
                     hasChildren: false,
                     children: []
                 });
-
-                if(arr[i].hasChildren === false){
-                    arr[i].hasChildren = !arr[i].hasChildren;
-                };
-
-            } else if( arr[i].hasChildren === true) {
-                var arr = arr[i].children;
-                this.addSubtask(parentId, subtaskValue, arr);
+                todo.hasChildren = true;
+                break;
+            } else if (todo.hasChildren) {
+                var children = todo.children;
+                this.addSubtask(children, parentObjId, subtaskValue);
             };
-        }   
-        templateBuilder.todoItems();
+        };
     },
-    deleteTask: function(parentId, arr) {  
-        
-        if(arguments[1] === undefined) {
-            arr = this.todos;
-        }
+    deleteTask: function(arr, parentObjId) {  
+        for(var i = 0; i < arr.length; i++) {
+            var todo = arr[i];
+            if (todo.id === parentObjId) {
+                var indexToDelete = arr.indexOf(todo);
+                arr = arr.splice(indexToDelete, 1);
+            } else if (todo.hasChildren) {
+                var children = todo.children;
+                this.deleteTask(children, parentObjId);
+            };
+        };
+    },
+    editTask: function(arr, parentObjId){
 
-        for(let i = 0; i < arr.length; i++) {
-            
-            if(parentId === arr[i].id) {
-                arr.splice(arr[i], 1);
-
-                if(arr.length === 0) {
-                    arr.hasChildren = !arr.hasChildren;
-                };
-
-            } else if(arr[i].hasChildren === true) {
-                var arr = arr[i].children;
-                app.deleteTask(parentId, arr);
-            }
-        }
-
-        templateBuilder.todoItems();
-        
     }
 };
 var eventHandler = {
     setupEventListeners: function() {
-        var addTodoBtn = document.querySelector(".add-todo__btn")
-        addTodoBtn.addEventListener('click', this.addTodo.bind(this));
-
+        var addTaskBtn = document.querySelector(".add-todo__btn")
+        addTaskBtn.addEventListener('click', this.addTask.bind(this));
         var todosCollection = document.querySelector('.todos-collection');
         todosCollection.addEventListener('click', function(e){
             if(e.target.className === "subtask-adding-view__btn") {
@@ -160,46 +88,60 @@ var eventHandler = {
                 renderInterface.subtaskRemoveView(e);
             } else if(e.target.className === "delete-task__btn") {
                 eventHandler.deleteTask(e);
-            };
+            } else if(e.target.className === "edit-task__btn") {
+                renderInterface.editTaskAddView(e);
+            } else if(e.target.className === "save-edit-task__btn") {
+                eventHandler.editTask(e);
+            } else if(e.target.className === "edit-task-remove-view__btn") {
+                renderInterface.editTaskRemoveView(e);
+            }
         });
-
     },
-    addTodo: function(e) {
-        var todoInput = document.querySelector('[name=todo-input]');
+    addTask: function(e) {
+        var parentContainer = e.target.closest('div');
+        var todoInput = parentContainer.querySelector('[name=todo-input]');
         var inputValue = todoInput.value.trim();
-        app.addTodo(inputValue);
+        App.addTask(inputValue);
+        renderInterface.resetInput()
+        templateBuilder.todoItems();
     },
     addSubtask: function(e) {
         var parentLi = e.target.closest('li');
-        var parentId = parentLi.id;
-
+        var parentObjId = parentLi.id;
         var subtaskInput = parentLi.querySelector('[name=subtask-input]');
         var subtaskValue = subtaskInput.value.trim();
-        
-        app.addSubtask(parentId, subtaskValue);
+        var arr = App.todos;
+        App.addSubtask(arr, parentObjId, subtaskValue);
+        templateBuilder.todoItems();
     },
     deleteTask: function(e) {
         var parentLi = e.target.closest('li');
-        var parentId = parentLi.id;
-       
-
-        app.deleteTask(parentId);
+        var parentLiId = parentLi.id;
+        var parentObjId = parentLiId
+        var arr = App.todos;
+        App.deleteTask(arr, parentObjId);
+        templateBuilder.todoItems();
+    },
+    editTask: function(e) {
+        var parentLi = e.target.closes('li');
+        var parentLiId = parentLi.id;
+        var parentObjId = parentLiId;
+        var arr = App.todos;
+        App.editTask(arr, parentObjId);
     }
 };
 
 var templateBuilder = {
     todoItems: function() {
-        var template = app.todos.map( function(todo,i) {
-
+        var template = App.todos.map( function(todo,i) {
             if(todo.hasChildren === true) {
                 var templateSubtask = templateBuilder.subtaskItems(todo);
             }
-
             return templateTodo = `
-            <li id="${todo.id}">
+            <li id="${todo.id}" class="task-list-item">
                 <div class="todo-view">
-                    <input type="checkbox" data-index="${todo.id + i}" id="toggle-${i} ${todo.completed ? "checked" : ""}"/>
-                    <label for="toggle-${todo.id + i}"> ${todo.value} </label>
+                    <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}"/>
+                    <label class="task-value"> ${todo.value} </label>
                     <input type="button" value="+ Subtask" class="subtask-adding-view__btn">
                     <input type="button" value="Delete Task" class="delete-task__btn">
                     <input type="button" value="Edit Task" class="edit-task__btn">
@@ -208,8 +150,15 @@ var templateBuilder = {
                 <div class="subtask-adding-view">
                     <input type="text" name="subtask-input" class="subtask-input" placeholder="Your Subtask goes here!" autofocus>
                     <input type="submit" value="Save Subtask" class="add-subtask__btn">
-                    <input type="button" value="Cancel" class="subtask-remove-view__btn">
+                    <input type="submit" value="Cancel" class="subtask-remove-view__btn">
                 </div>
+
+                <div class="edit-task-view">
+                    <input type="text" name="edit-task-input" class="edit-task" autofocus>
+                    <input type="submit" value="Save" class="save-edit-task__btn">
+                    <input type="submit" value="Cancel" class="edit-task-remove-view__btn">
+                </div>
+
                 <ul id="collection-${todo.id}" class="subtask-collection">
                     ${templateSubtask}
                 </ul>
@@ -222,16 +171,14 @@ var templateBuilder = {
     },
     subtaskItems: function(todo) {
         var templateSubtask = todo.children.map( function(todo,i) {
-
             if(todo.hasChildren === true) {
                 var templateSubtaskOthers = templateBuilder.subtaskItems(todo);
             }
-
             return `
-            <li id="${todo.id}">
+            <li id="${todo.id}" class="task-list-item">
                 <div class="todo-view">
-                    <input type="checkbox" data-index="${todo.id + i}" id="toggle-${i} ${todo.completed ? "checked" : ""}"/>
-                    <label for="toggle-${todo.id + i}"> ${todo.value} </label>
+                    <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}"/>
+                    <label class="task-value"> ${todo.value} </label>
                     <input type="button" value="+ Subtask" class="subtask-adding-view__btn">
                     <input type="button" value="Delete Task" class="delete-task__btn">
                     <input type="button" value="Edit Task" class="edit-task__btn">
@@ -242,7 +189,16 @@ var templateBuilder = {
                     <input type="submit" value="Save Subtask" class="add-subtask__btn">
                     <input type="button" value="Cancel" class="subtask-remove-view__btn">
                 </div>
-                <ul id="collection-${todo.id}" class="subtask-collection"> ${templateSubtaskOthers}</ul>
+
+                <div class="edit-task-view">
+                    <input type="text" name="edit-task-input" class="edit-task" autofocus>
+                    <input type="submit" value="Save" class="save-edit-task__btn">
+                    <input type="submit" value="Cancel" class="edit-task-remove-view__btn">
+                </div>
+
+                <ul id="collection-${todo.id}" class="subtask-collection"> 
+                    ${templateSubtaskOthers} 
+                </ul>
             </li>
             `
         });
@@ -261,21 +217,34 @@ var renderInterface = {
         var addingViewElement = parentLi.querySelector(".subtask-adding-view");
         addingViewElement.classList.remove('on');
     },
+    editTaskAddView: function(e) {
+        var parentLi = e.target.closest('li');
+        var addingViewElement = parentLi.querySelector(".edit-task-view");
+        
+        var valueForEditInput = parentLi.querySelector("label").innerHTML;
+        var addingViewInput = parentLi.querySelector("[name=edit-task-input]");
+        addingViewInput.value = valueForEditInput;
+        
+        addingViewElement.classList.add('on');
+        parentLi.classList.add('editing-on');
+        
+    },
+    editTaskRemoveView: function(e) {
+        var parentLi = e.target.closest('li');
+        var addingViewElement = parentLi.querySelector(".edit-task-view");
+        addingViewElement.classList.remove('on');
+        parentLi.classList.remove('editing-on');
+    },
     todoItems: function(template) {
         var todosCollection = document.querySelector('.todos-collection');
         todosCollection.innerHTML = '';
         todosCollection.insertAdjacentHTML("beforeend",template);
-        
         this.resetInput();
-        utilities.storageManager('todos', app.todos);
+        utilities.storageManager('todos', App.todos);
     },
     resetInput: function() {
         var todoInput = document.querySelector('[name=todo-input]');
         todoInput.value = '';
     }
 };
-app.initialize();
-
-
-
-
+App.initialize();
