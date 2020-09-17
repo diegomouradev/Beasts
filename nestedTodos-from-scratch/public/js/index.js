@@ -24,35 +24,35 @@ var utilities = {
             return (store && JSON.parse(store)) || [];
         }
     },
-    getIndexFromId: function(e) {
-        var todoId = e.target.closest('li').id;
-        var todosIndex = app.todos.length;
+    // getIndexFromId: function(e) { /* Review if this method can work with the recursive method. If so, delete this method */
+    //     var todoId = e.target.closest('li').id;
+    //     var todosIndex = app.todos.length;
         
 
-        while (todosIndex--) {
-          if (app.todos[todosIndex].id === todoId) {
-            return todosIndex;
-          }
-        }
-    },
-    buildPathPush: function(parentId, arr) {
-        var indexes = [];
+    //     while (todosIndex--) {
+    //       if (app.todos[todosIndex].id === todoId) {
+    //         return todosIndex;
+    //       }
+    //     }
+    // },
+    // buildPathPush: function(parentId, arr) { /* Review if this method is needed. If not, delete this method */
+    //     var indexes = [];
 
-        for( let i = 0; i < arr.length; i++) {
+    //     for( let i = 0; i < arr.length; i++) {
         
-            if(parentId === arr[i].id) {
-                return i;
+    //         if(parentId === arr[i].id) {
+    //             return i;
 
-            } else if( arr[i].hasChildren === true) {
-                indexes.push([i]);
-                utilities.buildPathPush(parentId, arr[i].children);
-                indexes.push([i]);
-            };
+    //         } else if( arr[i].hasChildren === true) {
+    //             indexes.push([i]);
+    //             utilities.buildPathPush(parentId, arr[i].children);
+    //             indexes.push([i]);
+    //         };
 
-        }   
+    //     }   
         
-        return indexes;
-    }
+    //     return indexes;
+    // }
 };
 var app = {
     initialize: function() {
@@ -119,6 +119,30 @@ var app = {
             };
         }   
         templateBuilder.todoItems();
+    },
+    deleteTask: function(parentId, arr) {  
+        
+        if(arguments[1] === undefined) {
+            arr = this.todos;
+        }
+
+        for(let i = 0; i < arr.length; i++) {
+            
+            if(parentId === arr[i].id) {
+                arr.splice(arr[i], 1);
+
+                if(arr.length === 0) {
+                    arr.hasChildren = !arr.hasChildren;
+                };
+
+            } else if(arr[i].hasChildren === true) {
+                var arr = arr[i].children;
+                app.deleteTask(parentId, arr);
+            }
+        }
+
+        templateBuilder.todoItems();
+        
     }
 };
 var eventHandler = {
@@ -134,6 +158,8 @@ var eventHandler = {
                 eventHandler.addSubtask(e);
             } else if(e.target.className === "subtask-remove-view__btn"){
                 renderInterface.subtaskRemoveView(e);
+            } else if(e.target.className === "delete-task__btn") {
+                eventHandler.deleteTask(e);
             };
         });
 
@@ -146,13 +172,19 @@ var eventHandler = {
     addSubtask: function(e) {
         var parentLi = e.target.closest('li');
         var parentId = parentLi.id;
-        var path = utilities.buildPathPush(parentId, app.todos);
 
         var subtaskInput = parentLi.querySelector('[name=subtask-input]');
         var subtaskValue = subtaskInput.value.trim();
         
         app.addSubtask(parentId, subtaskValue);
     },
+    deleteTask: function(e) {
+        var parentLi = e.target.closest('li');
+        var parentId = parentLi.id;
+       
+
+        app.deleteTask(parentId);
+    }
 };
 
 var templateBuilder = {
@@ -169,12 +201,14 @@ var templateBuilder = {
                     <input type="checkbox" data-index="${todo.id + i}" id="toggle-${i} ${todo.completed ? "checked" : ""}"/>
                     <label for="toggle-${todo.id + i}"> ${todo.value} </label>
                     <input type="button" value="+ Subtask" class="subtask-adding-view__btn">
+                    <input type="button" value="Delete Task" class="delete-task__btn">
+                    <input type="button" value="Edit Task" class="edit-task__btn">
                 </div>
 
                 <div class="subtask-adding-view">
                     <input type="text" name="subtask-input" class="subtask-input" placeholder="Your Subtask goes here!" autofocus>
                     <input type="submit" value="Save Subtask" class="add-subtask__btn">
-                    <input type="submit" value="Cancel" class="subtask-remove-view__btn">
+                    <input type="button" value="Cancel" class="subtask-remove-view__btn">
                 </div>
                 <ul id="collection-${todo.id}" class="subtask-collection">
                     ${templateSubtask}
@@ -199,12 +233,14 @@ var templateBuilder = {
                     <input type="checkbox" data-index="${todo.id + i}" id="toggle-${i} ${todo.completed ? "checked" : ""}"/>
                     <label for="toggle-${todo.id + i}"> ${todo.value} </label>
                     <input type="button" value="+ Subtask" class="subtask-adding-view__btn">
+                    <input type="button" value="Delete Task" class="delete-task__btn">
+                    <input type="button" value="Edit Task" class="edit-task__btn">
                 </div>
 
                 <div class="subtask-adding-view">
                     <input type="text" name="subtask-input" class="subtask-input" placeholder="Your Subtask goes here!" autofocus>
                     <input type="submit" value="Save Subtask" class="add-subtask__btn">
-                    <input type="submit" value="Cancel" class="subtask-remove-view__btn">
+                    <input type="button" value="Cancel" class="subtask-remove-view__btn">
                 </div>
                 <ul id="collection-${todo.id}" class="subtask-collection"> ${templateSubtaskOthers}</ul>
             </li>
