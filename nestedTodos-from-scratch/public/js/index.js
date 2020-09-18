@@ -70,8 +70,21 @@ var App = {
             };
         };
     },
-    editTask: function(arr, parentObjId){
-
+    editTask: function(arr, parentObjId, editedValue) {
+        
+        for (var i = 0; i < arr.length; i++) {
+            var todo= arr[i];
+            if ( todo.id === parentObjId) {
+                todo.value = editedValue;
+            } else if (todo.hasChildren) {
+                var children  = todo.children;
+                this.editTask(children, parentObjId, editedValue);
+            };
+        }
+        
+    },
+    togleCompleted: function (arr, parentObjId) {
+        // 
     }
 };
 var eventHandler = {
@@ -94,6 +107,8 @@ var eventHandler = {
                 eventHandler.editTask(e);
             } else if(e.target.className === "edit-task-remove-view__btn") {
                 renderInterface.editTaskRemoveView(e);
+            } else if(e.target.className === 'toggle') {
+                eventHandler.toggleCompleted(e);
             }
         });
     },
@@ -131,7 +146,16 @@ var eventHandler = {
         editedValue = editedValue.value;
 
         var arr = App.todos;
-        App.editTask(arr, parentObjId);
+        App.editTask(arr, parentObjId, editedValue);
+        templateBuilder.todoItems();
+    },
+    toggleCompleted: function(e) {
+        var parentLi = e.target.closest('li');
+        var parentLiId = parentLi.id;
+        var parentObjId = parentLiId;
+
+        App.toggleCompleted(parentObjId);
+        App.renderInterface(parentLi);
     }
 };
 
@@ -246,9 +270,16 @@ var renderInterface = {
         this.resetInput();
         utilities.storageManager('todos', App.todos);
     },
-    resetInput: function() {
+    resetInput: function(parentLi) {
         var todoInput = document.querySelector('[name=todo-input]');
-        todoInput.value = '';
+        if (todoInput.value !== '') {
+            todoInput.value = "";
+        };
+
+        var editTodoInput = document.querySelectorAll('[name=edit-task-input]');
+        if (editTodoInput.value !== '') {
+            editTodoInput.value = "";
+        };
     }
 };
 App.initialize();
