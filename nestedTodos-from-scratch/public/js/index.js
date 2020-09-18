@@ -1,18 +1,12 @@
 var utilities = {
     idGenerator: function() {
         var i, randomNumber;
-      var id = "";
-
-      for (i = 0; i < 19; i++) {
-        randomNumber = (Math.random() * 16) | 0;
-        if (i === 8 || i === 12 || i === 16 || i === 20) {
-          id += "-";
+        var id = "";
+        for (i = 0; i < 19; i++) {
+            randomNumber = (Math.random() * 16) | 0;
+            if (i === 8 || i === 12 || i === 16 || i === 20) {id += "-";}
+            id += (i === 12 ? 4 : i === 16 ? (randomNumber & 3) | 8 : randomNumber).toString(16);
         }
-        id += (i === 12 ? 4 : i === 16 ? (randomNumber & 3) | 8 : randomNumber).toString(
-          16
-        );
-      }
-
       return id;
     },
     storageManager: function(namespace, data) {
@@ -73,7 +67,7 @@ var App = {
     editTask: function(arr, parentObjId, editedValue) {
         
         for (var i = 0; i < arr.length; i++) {
-            var todo= arr[i];
+            var todo = arr[i];
             if ( todo.id === parentObjId) {
                 todo.value = editedValue;
             } else if (todo.hasChildren) {
@@ -83,8 +77,30 @@ var App = {
         }
         
     },
-    togleCompleted: function (arr, parentObjId) {
-        // 
+    toggleCompleted: function (arr, parentObjId) {
+        for (var i = 0; i < arr.length; i++) {
+            var todo = arr[i];
+            if(todo.id === parentObjId) {
+                todo.completed = !todo.completed;
+                var parentStatus = todo.completed;
+                if(todo.hasChildren) {
+                    var children = todo.children;
+                    this.toggleChildren(children, parentStatus);
+                }
+            } else if(todo.hasChildren) {
+                var children = todo.children;
+                this.toggleCompleted(children, parentObjId);
+            };
+        };
+    },
+    toggleChildren: function (children, parentStatus) {
+        children.map( function(todo) {
+            todo.completed = parentStatus;
+            if(todo.hasChildren){
+                var children = todo.children;
+                App.toggleChildren(children, parentStatus); 
+            };
+        });
     }
 };
 var eventHandler = {
@@ -153,9 +169,9 @@ var eventHandler = {
         var parentLi = e.target.closest('li');
         var parentLiId = parentLi.id;
         var parentObjId = parentLiId;
-
-        App.toggleCompleted(parentObjId);
-        App.renderInterface(parentLi);
+        var arr = App.todos;
+        App.toggleCompleted(arr, parentObjId);
+        templateBuilder.todoItems();
     }
 };
 
@@ -166,9 +182,9 @@ var templateBuilder = {
                 var templateSubtask = templateBuilder.subtaskItems(todo);
             }
             return templateTodo = `
-            <li id="${todo.id}" class="task-list-item">
+            <li id="${todo.id}" class="task-list-item ${todo.completed ? "completed" : ""}">
                 <div class="todo-view">
-                    <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}"/>
+                    <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
                     <label class="task-value"> ${todo.value} </label>
                     <input type="button" value="+ Subtask" class="subtask-adding-view__btn">
                     <input type="button" value="Delete Task" class="delete-task__btn">
@@ -195,7 +211,7 @@ var templateBuilder = {
         }); 
         template = template.join('');
         console.log(template)
-        renderInterface.todoItems(template);
+        renderInterface.todosCollection(template);
     },
     subtaskItems: function(todo) {
         var templateSubtask = todo.children.map( function(todo,i) {
@@ -203,9 +219,9 @@ var templateBuilder = {
                 var templateSubtaskOthers = templateBuilder.subtaskItems(todo);
             }
             return `
-            <li id="${todo.id}" class="task-list-item">
+            <li id="${todo.id}" class="task-list-item ${todo.completed ? "completed" : ""}">
                 <div class="todo-view">
-                    <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}"/>
+                    <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
                     <label class="task-value"> ${todo.value} </label>
                     <input type="button" value="+ Subtask" class="subtask-adding-view__btn">
                     <input type="button" value="Delete Task" class="delete-task__btn">
@@ -248,11 +264,9 @@ var renderInterface = {
     editTaskAddView: function(e) {
         var parentLi = e.target.closest('li');
         var addingViewElement = parentLi.querySelector(".edit-task-view");
-        
         var valueForEditInput = parentLi.querySelector("label").innerHTML;
         var addingViewInput = parentLi.querySelector("[name=edit-task-input]");
         addingViewInput.value = valueForEditInput;
-        
         addingViewElement.classList.add('on');
         parentLi.classList.add('editing-on');
         
@@ -263,14 +277,14 @@ var renderInterface = {
         addingViewElement.classList.remove('on');
         parentLi.classList.remove('editing-on');
     },
-    todoItems: function(template) {
+    todosCollection: function(template) {
         var todosCollection = document.querySelector('.todos-collection');
         todosCollection.innerHTML = '';
         todosCollection.insertAdjacentHTML("beforeend",template);
         this.resetInput();
         utilities.storageManager('todos', App.todos);
     },
-    resetInput: function(parentLi) {
+    resetInput: function() {
         var todoInput = document.querySelector('[name=todo-input]');
         if (todoInput.value !== '') {
             todoInput.value = "";
