@@ -181,8 +181,10 @@ var templateBuilder = {
             if(todo.hasChildren === true) {
                 var templateSubtask = templateBuilder.subtaskItems(todo);
             }
+
             return templateTodo = `
             <li id="${todo.id}" class="task-list-item ${todo.completed ? "completed" : ""}">
+
                 <div class="todo-view">
                     <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
                     <label class="task-value"> ${todo.value} </label>
@@ -208,10 +210,13 @@ var templateBuilder = {
                 </ul>
             </li>
             `
+            
         }); 
+
         template = template.join('');
         console.log(template)
         renderInterface.todosCollection(template);
+
     },
     subtaskItems: function(todo) {
         var templateSubtask = todo.children.map( function(todo,i) {
