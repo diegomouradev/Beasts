@@ -1,36 +1,24 @@
+
 .subtask-adding-view {
-    display: none;
-}
+  display: none; }
 
 .subtask-adding-view.on {
-    display: block;
-}
+  display: block; }
 
 .edit-task-view {
-    display: none;
-}
+  display: none; }
 
 .task-list-item.editing-on .edit-task-view.on {
-    display: block;
-}
+  display: block; }
 
 .task-list-item .todo-view {
-    display: block;
-}
+  display: block; }
 
 .task-list-item.editing-on .todo-view {
-    display: none;
-}
+  display: none; }
 
-.task-list-item.completed label{
-    text-decoration: line-through;
-}
+.task-list-item.completed label {
+  text-decoration: line-through; }
 
-/* .task-list-item.completed input{
-    display: none;
-} */
-
-.toggle:completed label{
-    text-decoration: line-through;
-}
-
+.toggle:completed label {
+  text-decoration: line-through; }

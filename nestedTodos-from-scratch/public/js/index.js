@@ -111,7 +111,8 @@ var App = {
         });
     },
     getFilteredTasks: function () {
-        var arr = this.todos.slice();
+        var arr = this.todos;
+        
         if (this.filter === 'active') {
             return this.getTasksTodo(arr);
         }
@@ -124,51 +125,35 @@ var App = {
     },
     getTasksTodo: function (arr) {
         return arr.reduce(function filter(acc, todo) {
-
-
-            if (!todo.completed && !todo.hasChildren) {
-                acc.push(todo);
-
-            } else if (!todo.completed && todo.hasChildren) {
-                var arr = todo.children;
-
-                var hasToDoChild = arr.filter (function(childTodo) {
-                    return !childTodo.completed;
-                });
-
-                if(hasToDoChild.length > 0){
+            if (!todo.completed) {
+                if (todo.hasChildren) {
+                    var todoNoChildren = {};
+                    Object.assign(todoNoChildren, todo);
+                    todoNoChildren.children = [];
+                    acc.push(todoNoChildren);
+                    var arr = todo.children;
                     acc.push(App.getTasksTodo(arr));
-
                 } else {
                     acc.push(todo);
                 }
-          
-            }
-            
+            } 
             return acc;
-
         }, []);
     },
     getCompletedTasks: function (arr) {
         return arr.reduce(function filter(acc, todo) {
-            
             if (todo.completed) {
                 acc.push(todo);
-
             } else if (!todo.completed && todo.hasChildren) {
                 var arr = todo.children;
-
                 var hasCompletedChild = arr.some (function(childTodo){
                     return childTodo.completed;
                 });
-
                 if(hasCompletedChild){
                     acc.push(App.getCompletedTasks(arr));
                 }
             }
-
             return acc;
-
         }, []);
     },
 };
@@ -255,7 +240,7 @@ var templateBuilder = {
                 todo = todo[0];
             }
 
-            if(todo.hasChildren === true) {
+            if(todo.hasChildren) {
                 var templateSubtask = templateBuilder.subtaskItems(todo);
             }
 
@@ -292,7 +277,6 @@ var templateBuilder = {
         }); 
 
         template = template.join('');
-        console.log(template)
         renderInterface.todosCollection(template);
 
     },
@@ -333,11 +317,13 @@ var templateBuilder = {
         templateSubtask = templateSubtask.join('');
         return templateSubtask;
     },
-    header: function() {
+    header: function(tasksToDo) {
         var headerData = {
-            filter: App.filter
+            filter: App.filter,
+            tasksToDo: tasksToDo,
         }
         var headerTemplate = `
+        <h2 class="heading-secondary"> You have ${headerData.tasksToDo} task${ tasksToDo === 1 ? "" : 's'} to do!</h2>
         <ul id="filters">
           <li>
             <a ${headerData.filter === "all" ? 'class="selected"' : ""} href="#/all">All</a>
@@ -356,7 +342,9 @@ var templateBuilder = {
 var renderInterface = {
     tasksList: function () {
         var tasks = App.getFilteredTasks();
-        templateBuilder.todoItems(tasks)
+        var tasksToDo = App.getTasksTodo(App.todos).length;
+        templateBuilder.todoItems(tasks);
+        templateBuilder.header(tasksToDo);
     },
     subtaskAddView: function(e) {
         var parentLi = e.target.closest('li');

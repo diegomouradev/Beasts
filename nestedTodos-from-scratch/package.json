@@ -1,0 +1,17 @@
+{
+  "name": "beasts-nested-todos",
+  "version": "1.0.0",
+  "description": "nested lists of to do tasks",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "compile:sass": "node-sass public/sass/main.scss public/css/styles.css -w"
+  },
+  "author": "Diego Moura",
+  "license": "MIT",
+  "devDependencies": {
+    "node-sass": "^4.14.1"
+  }
+}
