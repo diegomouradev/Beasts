@@ -11,34 +11,24 @@
         <h1 class="heading-primary">
             listCeption
         </h1>
-        <!-- Number of Tasks left -->
-        <div class="header">
-            <h2 class="tasks-counter">
-                You have <span class="counter-number"></span> item<span class="counter-word"></span> left!
-            </h2>
-        </div>
+        
+        <header id="header" class="header">
+
+        </header>
         <!-- Input todo -->
         <div class="main-input__container">
             <input type="text" name="todo-input" class="todo-input" placeholder="Your todo goes here!" autofocus>
             <input type="submit" value="+ Add Todo" class="add-todo__btn">
         </div>
         
-        <!-- Tasks by Status -->
-        <div class="status-view">
-            <input type="checkbox" id="status-view-all" class="status-view-all__btn">
-            <label for="status-view-all">All</label>
-
-            <input type="checkbox" id="status-view-completed" class="status-view-completed__btn">
-            <label for="status-view-completed">Completed</label>
-
-            <input type="checkbox" id="status-view-todo" class="status-view-todo__btn">
-            <label for="status-view-todo">To be done!</label>
-        </div>
-        <ul class="todos-collection"></ul>
+        <ul class="todos-collection">
+            
+        </ul>
    
     </main>    
 
     <footer class="page-footer"></footer>
+    <script src="/nestedTodos-from-scratch/public/js/director.js"></script>
     <script src="/nestedTodos-from-scratch/public/js/index.js"></script>
 </body>
 </html>

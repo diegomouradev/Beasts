@@ -22,10 +22,15 @@
     display: none;
 }
 
-.task-list-item.completed .todo-view{
+.task-list-item.completed label{
     text-decoration: line-through;
 }
 
-.toggle:completed {
+/* .task-list-item.completed input{
+    display: none;
+} */
+
+.toggle:completed label{
     text-decoration: line-through;
 }
+

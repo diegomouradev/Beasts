@@ -22,7 +22,15 @@ var App = {
     initialize: function() {
         this.todos = utilities.storageManager('todos');
         eventHandler.setupEventListeners();
-        templateBuilder.todoItems();
+        templateBuilder.header();
+
+        new Router({
+            "/:filter": function(filter) {
+              this.filter = filter;
+              renderInterface.tasksList();
+            }.bind(this)
+          }).init("/all");
+
     },
     addTask: function(inputValue){
         this.todos.push({
@@ -101,12 +109,74 @@ var App = {
                 App.toggleChildren(children, parentStatus); 
             };
         });
-    }
+    },
+    getFilteredTasks: function () {
+        var arr = this.todos.slice();
+        if (this.filter === 'active') {
+            return this.getTasksTodo(arr);
+        }
+
+        if (this.filter === 'completed') {
+            return this.getCompletedTasks(arr);
+        }
+
+        return this.todos;
+    },
+    getTasksTodo: function (arr) {
+        return arr.reduce(function filter(acc, todo) {
+
+
+            if (!todo.completed && !todo.hasChildren) {
+                acc.push(todo);
+
+            } else if (!todo.completed && todo.hasChildren) {
+                var arr = todo.children;
+
+                var hasToDoChild = arr.filter (function(childTodo) {
+                    return !childTodo.completed;
+                });
+
+                if(hasToDoChild.length > 0){
+                    acc.push(App.getTasksTodo(arr));
+
+                } else {
+                    acc.push(todo);
+                }
+          
+            }
+            
+            return acc;
+
+        }, []);
+    },
+    getCompletedTasks: function (arr) {
+        return arr.reduce(function filter(acc, todo) {
+            
+            if (todo.completed) {
+                acc.push(todo);
+
+            } else if (!todo.completed && todo.hasChildren) {
+                var arr = todo.children;
+
+                var hasCompletedChild = arr.some (function(childTodo){
+                    return childTodo.completed;
+                });
+
+                if(hasCompletedChild){
+                    acc.push(App.getCompletedTasks(arr));
+                }
+            }
+
+            return acc;
+
+        }, []);
+    },
 };
 var eventHandler = {
     setupEventListeners: function() {
         var addTaskBtn = document.querySelector(".add-todo__btn")
         addTaskBtn.addEventListener('click', this.addTask.bind(this));
+        
         var todosCollection = document.querySelector('.todos-collection');
         todosCollection.addEventListener('click', function(e){
             if(e.target.className === "subtask-adding-view__btn") {
@@ -134,7 +204,7 @@ var eventHandler = {
         var inputValue = todoInput.value.trim();
         App.addTask(inputValue);
         renderInterface.resetInput()
-        templateBuilder.todoItems();
+        renderInterface.tasksList();
     },
     addSubtask: function(e) {
         var parentLi = e.target.closest('li');
@@ -143,15 +213,15 @@ var eventHandler = {
         var subtaskValue = subtaskInput.value.trim();
         var arr = App.todos;
         App.addSubtask(arr, parentObjId, subtaskValue);
-        templateBuilder.todoItems();
+        renderInterface.tasksList();
     },
     deleteTask: function(e) {
         var parentLi = e.target.closest('li');
         var parentLiId = parentLi.id;
-        var parentObjId = parentLiId
+        var parentObjId = parentLiId;
         var arr = App.todos;
         App.deleteTask(arr, parentObjId);
-        templateBuilder.todoItems();
+        renderInterface.tasksList();
     },
     editTask: function(e) {
         var parentLi = e.target.closest('li');
@@ -163,7 +233,7 @@ var eventHandler = {
 
         var arr = App.todos;
         App.editTask(arr, parentObjId, editedValue);
-        templateBuilder.todoItems();
+        renderInterface.tasksList();
     },
     toggleCompleted: function(e) {
         var parentLi = e.target.closest('li');
@@ -171,13 +241,20 @@ var eventHandler = {
         var parentObjId = parentLiId;
         var arr = App.todos;
         App.toggleCompleted(arr, parentObjId);
-        templateBuilder.todoItems();
+        renderInterface.tasksList();
+
+        // LET'S ADD A RENDER TO HIDE THE ADD SUBTASK, AND EDIT ON TOGGLED ELEMENTS
     }
 };
 
 var templateBuilder = {
-    todoItems: function() {
-        var template = App.todos.map( function(todo,i) {
+    todoItems: function(tasks) {
+        var template = tasks.map( function(todo,i) {
+
+            if(Array.isArray(todo)) {
+                todo = todo[0];
+            }
+
             if(todo.hasChildren === true) {
                 var templateSubtask = templateBuilder.subtaskItems(todo);
             }
@@ -204,13 +281,14 @@ var templateBuilder = {
                     <input type="submit" value="Save" class="save-edit-task__btn">
                     <input type="submit" value="Cancel" class="edit-task-remove-view__btn">
                 </div>
-
-                <ul id="collection-${todo.id}" class="subtask-collection">
-                    ${templateSubtask}
-                </ul>
-            </li>
+                
+                ${todo.hasChildren ? 
+                    `<ul id="collection-${todo.id}" class="subtask-collection">
+                        ${templateSubtask}
+                    </ul>
+                </li>
+                ` : "</li>"}
             `
-            
         }); 
 
         template = template.join('');
@@ -245,17 +323,41 @@ var templateBuilder = {
                     <input type="submit" value="Cancel" class="edit-task-remove-view__btn">
                 </div>
 
-                <ul id="collection-${todo.id}" class="subtask-collection"> 
-                    ${templateSubtaskOthers} 
-                </ul>
-            </li>
+                ${todo.hasChildren ? 
+                    `<ul id="collection-${todo.id}" class="subtask-collection">
+                        ${templateSubtaskOthers}
+                    </ul>
+                </li>` : "</li>"}
             `
         });
         templateSubtask = templateSubtask.join('');
         return templateSubtask;
+    },
+    header: function() {
+        var headerData = {
+            filter: App.filter
+        }
+        var headerTemplate = `
+        <ul id="filters">
+          <li>
+            <a ${headerData.filter === "all" ? 'class="selected"' : ""} href="#/all">All</a>
+          </li>
+          <li>
+            <a ${headerData.filter === "active" ? 'class="selected"' : ""} href="#/active">Active</a>
+          </li>
+          <li>
+            <a ${headerData.filter === "completed" ? 'class="selected"' : ""} href="#/completed">Completed</a>
+          </li>
+        </ul>
+        `
+        renderInterface.header(headerTemplate);
     }
 };
 var renderInterface = {
+    tasksList: function () {
+        var tasks = App.getFilteredTasks();
+        templateBuilder.todoItems(tasks)
+    },
     subtaskAddView: function(e) {
         var parentLi = e.target.closest('li');
         var addingViewElement = parentLi.querySelector(".subtask-adding-view");
@@ -288,6 +390,11 @@ var renderInterface = {
         todosCollection.insertAdjacentHTML("beforeend",template);
         this.resetInput();
         utilities.storageManager('todos', App.todos);
+    },
+    header: function(headerTemplate) {
+        var headerElement = document.getElementById('header');
+        headerElement.innerHTML = '';
+        headerElement.insertAdjacentHTML("beforeend", headerTemplate);
     },
     resetInput: function() {
         var todoInput = document.querySelector('[name=todo-input]');
