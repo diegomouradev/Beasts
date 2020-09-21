@@ -18,7 +18,20 @@
   display: none; }
 
 .task-list-item.completed label {
-  text-decoration: line-through; }
+  text-decoration: line-through; 
+}
 
-.toggle:completed label {
-  text-decoration: line-through; }
+.task-list-item.completed ul {
+  display: none; 
+}
+
+.task-list-item.completed .edit-task__btn {
+  display: none; 
+}
+
+.task-list-item.completed .subtask-adding-view__btn {
+  display: none; 
+}
+
+/* .toggle:completed label {
+  text-decoration: line-through; } */

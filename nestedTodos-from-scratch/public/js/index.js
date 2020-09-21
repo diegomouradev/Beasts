@@ -131,13 +131,21 @@ var App = {
                     Object.assign(todoNoChildren, todo);
                     todoNoChildren.children = [];
                     acc.push(todoNoChildren);
+
                     var arr = todo.children;
-                    acc.push(App.getTasksTodo(arr));
+                    var hasToDoChild = arr.some( function (childTodo) {
+                        return !childTodo.completed;
+                    });
+
+                    if(hasToDoChild) {
+                        acc.push(App.getTasksTodo(arr));
+                    }
+                    
                 } else {
                     acc.push(todo);
                 }
             } 
-            return acc;
+            return acc.flat();
         }, []);
     },
     getCompletedTasks: function (arr) {
