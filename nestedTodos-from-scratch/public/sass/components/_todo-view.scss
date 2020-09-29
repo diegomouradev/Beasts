@@ -14,14 +14,48 @@
     grid-row: 1 / -1;
     margin-left: 1.5rem;
     z-index: 100;
+    cursor: pointer;
+    visibility: hidden;
+    transition: all .3s ease-in-out;
+
+    &::before {
+        content: '';
+        display: flex;
+        background-color: transparent;
+        border: 0.1rem solid $acent-turquoise;
+        border-radius: 3rem;
+        width: 2rem;
+        height: 2rem;
+        margin-top: -.3rem;
+        visibility: visible;
+    }
+}
+
+.toggle:checked {
+
+    &::before {
+        content: '\2713';
+        font-size: 1.5rem;
+        line-height: 77%;
+        color: $grey-dark-4;
+        display: flex;
+        background-color: $acent-turquoise;
+        border: 0.5rem solid $acent-turquoise;
+        border-radius: 3rem;
+        width: 2rem;
+        height: 2rem;
+        margin-top: -.4rem;
+        transition: all .3s ease-in-out;
+        visibility: visible; 
+    }
 }
 .task-value {
     grid-column: 1 / span 6;
     grid-row: 1 / -1;
     width: 100%;
     font-family: inherit;
-    font-size: 2rem;
-    font-weight: 100;
+    font-size: 2.5rem;
+    font-weight: 300;
     color: $grey-dark-2;
     padding: 1rem 15rem 1rem 5rem;
     border-radius: 3rem;

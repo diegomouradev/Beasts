@@ -256,8 +256,8 @@ var templateBuilder = {
             <li id="${todo.id}" class="task-list-item ${todo.completed ? "completed" : ""}">
 
                 <div class="todo-view">
-                    <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
-                    <label class="task-value"> ${todo.value} </label>
+                    <input id="toggle-${todo.id}" type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
+                    <label for="toggle-${todo.id}"class="task-value"> ${todo.value} </label>
                     <input type="button" value="+" class="subtask-adding-view__btn">
                     <input type="button" value="x" class="delete-task__btn">
                     <input type="button" value="e" class="edit-task__btn">
@@ -296,8 +296,8 @@ var templateBuilder = {
             return `
             <li id="${todo.id}" class="task-list-item ${todo.completed ? "completed" : ""}">
                 <div class="todo-view">
-                    <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
-                    <label class="task-value"> ${todo.value} </label>
+                    <input id="toggle-${todo.id}" type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
+                    <label for="toggle-${todo.id}" class="task-value"> ${todo.value} </label>
                     <input type="button" value="+" class="subtask-adding-view__btn">
                     <input type="button" value="x" class="delete-task__btn">
                     <input type="button" value="e" class="edit-task__btn">

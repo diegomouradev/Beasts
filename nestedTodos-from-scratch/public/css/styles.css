@@ -169,15 +169,43 @@ body {
   grid-column: 1 / 2;
   grid-row: 1 / -1;
   margin-left: 1.5rem;
-  z-index: 100; }
+  z-index: 100;
+  cursor: pointer;
+  visibility: hidden;
+  transition: all .3s ease-in-out; }
+  .toggle::before {
+    content: '';
+    display: flex;
+    background-color: transparent;
+    border: 0.1rem solid #00b4d8;
+    border-radius: 3rem;
+    width: 2rem;
+    height: 2rem;
+    margin-top: -.3rem;
+    visibility: visible; }
+
+.toggle:checked::before {
+  content: '\2713';
+  font-size: 1.5rem;
+  line-height: 77%;
+  color: #242423;
+  display: flex;
+  background-color: #00b4d8;
+  border: 0.5rem solid #00b4d8;
+  border-radius: 3rem;
+  width: 2rem;
+  height: 2rem;
+  margin-top: -.4rem;
+  transition: all .3s ease-in-out;
+  visibility: visible; }
 
 .task-value {
   grid-column: 1 / span 6;
   grid-row: 1 / -1;
   width: 100%;
   font-family: inherit;
-  font-size: 2rem;
-  font-weight: 100;
+  font-size: 2.5rem;
+  font-weight: 300;
   color: #999;
   padding: 1rem 15rem 1rem 5rem;
   border-radius: 3rem;
