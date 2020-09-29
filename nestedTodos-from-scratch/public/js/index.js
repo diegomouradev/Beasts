@@ -258,9 +258,9 @@ var templateBuilder = {
                 <div class="todo-view">
                     <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
                     <label class="task-value"> ${todo.value} </label>
-                    <input type="button" value="+ Subtask" class="subtask-adding-view__btn">
-                    <input type="button" value="Delete Task" class="delete-task__btn">
-                    <input type="button" value="Edit Task" class="edit-task__btn">
+                    <input type="button" value="+" class="subtask-adding-view__btn">
+                    <input type="button" value="x" class="delete-task__btn">
+                    <input type="button" value="e" class="edit-task__btn">
                 </div>
 
                 <div class="subtask-adding-view">
@@ -298,9 +298,9 @@ var templateBuilder = {
                 <div class="todo-view">
                     <input type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
                     <label class="task-value"> ${todo.value} </label>
-                    <input type="button" value="+ Subtask" class="subtask-adding-view__btn">
-                    <input type="button" value="Delete Task" class="delete-task__btn">
-                    <input type="button" value="Edit Task" class="edit-task__btn">
+                    <input type="button" value="+" class="subtask-adding-view__btn">
+                    <input type="button" value="x" class="delete-task__btn">
+                    <input type="button" value="e" class="edit-task__btn">
                 </div>
 
                 <div class="subtask-adding-view">
@@ -331,7 +331,7 @@ var templateBuilder = {
             tasksToDo: tasksToDo,
         }
         var headerTemplate = `
-        <h2 class="heading-secondary"> You have ${headerData.tasksToDo} task${ tasksToDo === 1 ? "" : 's'} to do!</h2>
+        <h2 class="heading-secondary"> YOU HAVE<span class="tasks-left"> ${headerData.tasksToDo}</span> TASK${ tasksToDo === 1 ? "" : 'S'} LEFT TO DO</h2>
         <ul id="filters">
           <li>
             <a ${headerData.filter === "all" ? 'class="selected"' : ""} href="#/all">All</a>

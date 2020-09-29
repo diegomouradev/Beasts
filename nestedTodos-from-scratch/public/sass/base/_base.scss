@@ -10,16 +10,39 @@
 
 html {
     font-size: 62.5%; //1 rem = 10px; 10px/16px = 62.5%
-    font-family: garage-gothic, sans-serif;
-    font-weight: 700;
+    font-family: 'proxima-nova',sans-serif;
+    font-weight: 300;
     font-style: normal;
 }
 
 body {
     box-sizing: border-box;
     padding: 5rem;
+    height: 100%;
 }
 
 // FONT
 $default-font-size: 1.6rem;
+
+.body {
+    display: grid;
+    grid-template-columns: minmax(10rem, 1fr) minmax(50rem, 1fr) 1fr;
+    grid-template-rows: auto;
+    background-color: $grey-dark-4;
+    color: $grey-light-3;
+}
+
+.app {
+    grid-column: 2 / 3;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    border-radius: 1rem;
+    background-image: url(http://api.thumbr.it/whitenoise-361x370.png?background=333533ff&noise=626262&density=31&opacity=11 );
+    box-shadow: 9px 9px 44px -20px rgba(0,0,0,0.78);
+}
 

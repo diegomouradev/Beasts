@@ -1,3 +1,252 @@
+/* ----------- IMPORT ---------- */
+/* ----------- RESET ---------- */
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit; }
+
+html {
+  font-size: 62.5%;
+  font-family: 'proxima-nova',sans-serif;
+  font-weight: 300;
+  font-style: normal; }
+
+body {
+  box-sizing: border-box;
+  padding: 5rem;
+  height: 100%; }
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) minmax(50rem, 1fr) 1fr;
+  grid-template-rows: auto;
+  background-color: #242423;
+  color: #a9b0ac; }
+
+.app {
+  grid-column: 2 / 3;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  border-radius: 1rem;
+  background-image: url(http://api.thumbr.it/whitenoise-361x370.png?background=333533ff&noise=626262&density=31&opacity=11);
+  box-shadow: 9px 9px 44px -20px rgba(0, 0, 0, 0.78); }
+
+.heading-primary {
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 6rem;
+  text-align: center;
+  color: #242423;
+  margin-bottom: 3rem; }
+
+.heading-secondary {
+  margin: 1rem;
+  font-family: inherit;
+  font-weight: 300;
+  font-size: 2rem;
+  text-align: center;
+  color: #242423; }
+
+.todos-collection {
+  width: 100%;
+  list-style: none;
+  padding: 2rem; }
+
+.subtask-collection {
+  width: 100%;
+  list-style: none;
+  margin-left: 2rem; }
+
+.main-input__container {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  grid-row: 1fr; }
+
+.todo-input {
+  width: 100%;
+  outline: none;
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  padding: 1.5rem 2rem 1.5rem 2rem;
+  margin-bottom: 3rem;
+  background-color: transparent;
+  font-size: 2rem;
+  font-family: inherit;
+  font-weight: 400;
+  color: #a9b0ac;
+  border-radius: 3rem;
+  border: 0.1rem solid #00b4d8;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
+  transition: all .3s; }
+  .todo-input:focus {
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.5);
+    border: 0.18rem solid #00b4d8; }
+
+.todo-input::placeholder {
+  font-size: 2rem;
+  font-style: italic;
+  font-weight: 400;
+  color: #999; }
+
+.add-todo__btn {
+  font-family: inherit;
+  font-size: 1.6rem;
+  font-weight: 100;
+  color: transparent;
+  text-align: center;
+  cursor: pointer;
+  grid-column: 2 / -1;
+  grid-row: 1 / -1;
+  background-color: transparent;
+  border: 0.1rem solid #00b4d8;
+  border-radius: 3rem;
+  width: 3rem;
+  height: 3rem;
+  transform: translate(-1rem, 1.3rem);
+  transition: all .3s ease-in-out; }
+  .add-todo__btn:hover {
+    width: 6rem;
+    color: #999; }
+
+.header {
+  width: 90%;
+  margin: 0 auto; }
+
+#filters {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 3rem;
+  padding: 1.5rem 2rem; }
+
+#filters a {
+  font-size: 2.3rem;
+  text-decoration: none;
+  padding: 1rem 2rem;
+  border-radius: 3rem;
+  border: 0.1rem solid transparent;
+  transition: all .5s ease-in; }
+  #filters a:link {
+    color: #242423;
+    border: 0.1rem solid #242423; }
+  #filters a:visited {
+    color: #242423;
+    box-shadow: inset 10px 10px 35px -10px rgba(0, 0, 0, 0.4); }
+  #filters a:hover {
+    color: #999;
+    border-radius: 3rem;
+    border: 0.1rem solid #00b4d8;
+    box-shadow: inset 10px 10px 35px -10px rgba(0, 0, 0, 0.3); }
+  #filters a:active {
+    color: #242423;
+    border-radius: 3rem;
+    border: 0.1rem solid #00b4d8;
+    box-shadow: inset 10px 10px 35px -10px rgba(0, 0, 0, 0.4); }
+
+.tasks-left {
+  color: #00b4d8;
+  font-size: 3rem; }
+
+.task-list-item .todo-view {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 3rem 1fr repeat(3, 2rem) 0.5rem;
+  grid-template-rows: 1fr;
+  grid-column-gap: 1rem;
+  align-items: center;
+  justify-items: center; }
+
+.toggle {
+  grid-column: 1 / 2;
+  grid-row: 1 / -1;
+  margin-left: 1.5rem; }
+
+.task-value {
+  grid-column: 1 / span 6;
+  grid-row: 1 / -1;
+  width: 100%;
+  font-family: inherit;
+  font-size: 2rem;
+  font-weight: 100;
+  color: #999;
+  padding: 1rem 15rem 1rem 5rem;
+  border-radius: 3rem;
+  border-bottom: 0.1rem solid #242423;
+  box-shadow: inset 10px 10px 35px -10px rgba(0, 0, 0, 0.2); }
+
+.subtask-adding-view__btn {
+  font-family: inherit;
+  font-size: 2.5rem;
+  font-weight: 100;
+  color: #00b4d8;
+  text-align: center;
+  grid-column: 3 / 4;
+  grid-row: 1 / -1;
+  background-color: transparent;
+  border: none;
+  transition: all .3s ease-in-out;
+  padding: 0.5rem;
+  opacity: 0; }
+
+.task-list-item .todo-view .subtask-adding-view__btn:hover {
+  transform: scale(1.3);
+  color: limegreen; }
+
+.delete-task__btn {
+  font-family: inherit;
+  font-size: 2rem;
+  font-weight: 100;
+  color: #00b4d8;
+  text-align: center;
+  grid-column: 4 / 5;
+  grid-row: 1 / -1;
+  background-color: transparent;
+  border: none;
+  transition: all .3s ease-in-out;
+  margin-bottom: .3rem;
+  opacity: 0; }
+
+.task-list-item .todo-view .delete-task__btn:hover {
+  transform: scale(1.3);
+  color: crimson; }
+
+.edit-task__btn {
+  font-family: inherit;
+  font-size: 2rem;
+  font-weight: 100;
+  color: #00b4d8;
+  text-align: center;
+  grid-column: 5 / 6;
+  grid-row: 1 / -1;
+  background-color: transparent;
+  border: none;
+  margin-bottom: 0.3rem;
+  transition: all .3s ease-in-out;
+  opacity: 0; }
+
+.task-list-item .todo-view .edit-task__btn:hover {
+  transform: scale(1.3); }
+
+.task-list-item .todo-view:hover .subtask-adding-view__btn {
+  cursor: pointer;
+  opacity: 1; }
+
+.task-list-item .todo-view:hover .delete-task__btn {
+  cursor: pointer;
+  opacity: 1; }
+
+.task-list-item .todo-view:hover .edit-task__btn {
+  cursor: pointer;
+  opacity: 1; }
 
 .subtask-adding-view {
   display: none; }
@@ -11,27 +260,17 @@
 .task-list-item.editing-on .edit-task-view.on {
   display: block; }
 
-.task-list-item .todo-view {
-  display: block; }
-
 .task-list-item.editing-on .todo-view {
   display: none; }
 
 .task-list-item.completed label {
-  text-decoration: line-through; 
-}
+  text-decoration: line-through; }
 
 .task-list-item.completed ul {
-  display: none; 
-}
+  display: none; }
 
 .task-list-item.completed .edit-task__btn {
-  display: none; 
-}
+  display: none; }
 
 .task-list-item.completed .subtask-adding-view__btn {
-  display: none; 
-}
-
-/* .toggle:completed label {
-  text-decoration: line-through; } */
+  display: none; }

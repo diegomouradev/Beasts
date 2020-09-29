@@ -1,27 +1,15 @@
 /* ----------- IMPORT ---------- */
 
-// @import "base/base";
+@import "abstract/variables";
+
+@import "base/base";
+@import "base/typography";
+
+@import "components/collections";
+@import "components/list-items";
 @import "components/main-input";
-// @import "components/header";
-
-/* ----------- VARIABLES ---------- */
-
-$color-mustard: #fcca3d;
-$color-pink: #ff5576;
-$color-blue: #0070ff;
-
-$color-grey: #444b54;
-
-$color-grey-light-1: #f7f7f7;
-$color-grey-light-2: rgb(237, 237, 237);
-$color-grey-light-3: #a9b0ac;
-
-$color-grey-dark: #777;
-$color-grey-dark-2: #999;
-$color-grey-dark-3: #333;
-
-$color-white: #fff;
-$color-black: #000;
+@import "components/header";
+@import "components/todo-view";
 
 
 .subtask-adding-view {
@@ -40,19 +28,24 @@ $color-black: #000;
     display: block;
 }
 
-.task-list-item .todo-view {
-    display: block;
-}
+
 
 .task-list-item.editing-on .todo-view {
     display: none;
 }
 
-.task-list-item.completed label{
-    text-decoration: line-through;
+.task-list-item.completed label {
+    text-decoration: line-through; 
 }
 
-.toggle:completed label{
-    text-decoration: line-through;
+.task-list-item.completed ul {
+    display: none; 
 }
 
+.task-list-item.completed .edit-task__btn {
+    display: none; 
+}
+
+.task-list-item.completed .subtask-adding-view__btn {
+    display: none; 
+}

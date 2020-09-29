@@ -9,20 +9,22 @@
     <link rel="stylesheet" href="https://use.typekit.net/ppc5xxv.css">
     <title>nestedTodo</title>
 </head>
-<body>
+<body class="body">
     <main class="app">
         <h1 class="heading-primary">
             listCeption
         </h1>
-        
+
+         <!-- Input todo -->
+         <div class="main-input__container">
+            <input type="text" name="todo-input" class="todo-input" placeholder="Your todo goes here!" autofocus>
+            <input type="submit" value="Save" class="add-todo__btn">
+        </div>
+
         <header id="header" class="header">
 
         </header>
-        <!-- Input todo -->
-        <div class="main-input__container">
-            <input type="text" name="todo-input" class="todo-input" placeholder="Your todo goes here!" autofocus>
-            <input type="submit" value="+ Add Todo" class="add-todo__btn">
-        </div>
+       
         
         <ul class="todos-collection">
             

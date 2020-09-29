@@ -1,0 +1,63 @@
+.main-input__container {
+    display: grid;
+    grid-template-columns: 1fr min-content;
+    grid-row: 1fr;
+}
+
+.todo-input {
+    width: 100%;
+    outline: none;
+
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    padding: 1.5rem 2rem 1.5rem 2rem;
+    margin-bottom: 3rem;
+    background-color: transparent;
+
+    font-size: 2rem;
+    font-family: inherit;
+    font-weight: 400;
+    color: $grey-light-3;
+
+    border-radius: 3rem;
+    border: 0.1rem solid $acent-turquoise;
+    box-shadow: 0 1rem 2rem rgba($color-black, .1);
+
+    transition: all .3s;
+
+    &:focus {
+        box-shadow: 0 1rem 2rem rgba($color-black, .5);
+        border: 0.18rem solid $acent-turquoise;
+    }
+}
+
+.todo-input::placeholder{
+    font-size: 2rem;
+    font-style: italic;
+    font-weight: 400;
+    color: $grey-dark-2;
+}
+
+.add-todo__btn {
+    font-family: inherit;
+    font-size: 1.6rem;
+    font-weight: 100;
+    color: transparent;
+    text-align: center;
+    cursor: pointer;
+    grid-column: 2 / -1;
+    grid-row: 1 / -1;
+    background-color: transparent;
+    border: 0.1rem solid $acent-turquoise;
+    border-radius: 3rem;
+    width: 3rem;
+    height: 3rem;
+    transform: translate(-1rem, 1.3rem);
+    transition: all .3s ease-in-out;
+
+    &:hover {
+        width: 6rem;
+        color: $grey-dark-2;
+    }
+
+}
