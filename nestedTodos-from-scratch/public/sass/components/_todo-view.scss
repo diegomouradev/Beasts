@@ -13,6 +13,7 @@
     grid-column: 1 / 2;
     grid-row: 1 / -1;
     margin-left: 1.5rem;
+    z-index: 100;
 }
 .task-value {
     grid-column: 1 / span 6;
