@@ -46,3 +46,40 @@ $default-font-size: 1.6rem;
     box-shadow: 9px 9px 44px -20px rgba(0,0,0,0.78);
 }
 
+.subtask-adding-view {
+    display: none;
+}
+
+.subtask-adding-view.on {
+    display: block;
+}
+
+.edit-task-view {
+    display: none;
+}
+
+.task-list-item.editing-on .edit-task-view.on {
+    display: block;
+}
+
+
+
+.task-list-item.editing-on .todo-view {
+    display: none;
+}
+
+.task-list-item.completed label {
+    text-decoration: line-through; 
+}
+
+.task-list-item.completed ul {
+    display: none; 
+}
+
+.task-list-item.completed .edit-task__btn {
+    display: none; 
+}
+
+.task-list-item.completed .subtask-adding-view__btn {
+    display: none; 
+}

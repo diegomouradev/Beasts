@@ -38,31 +38,64 @@ body {
   background-image: url(http://api.thumbr.it/whitenoise-361x370.png?background=333533ff&noise=626262&density=31&opacity=11);
   box-shadow: 9px 9px 44px -20px rgba(0, 0, 0, 0.78); }
 
+.subtask-adding-view {
+  display: none; }
+
+.subtask-adding-view.on {
+  display: block; }
+
+.edit-task-view {
+  display: none; }
+
+.task-list-item.editing-on .edit-task-view.on {
+  display: block; }
+
+.task-list-item.editing-on .todo-view {
+  display: none; }
+
+.task-list-item.completed label {
+  text-decoration: line-through; }
+
+.task-list-item.completed ul {
+  display: none; }
+
+.task-list-item.completed .edit-task__btn {
+  display: none; }
+
+.task-list-item.completed .subtask-adding-view__btn {
+  display: none; }
+
 .heading-primary {
   font-family: inherit;
   font-weight: 900;
   font-size: 6rem;
   text-align: center;
-  color: #242423;
+  color: #999;
   margin-bottom: 3rem; }
 
 .heading-secondary {
   margin: 1rem;
   font-family: inherit;
   font-weight: 300;
-  font-size: 2rem;
+  font-size: 1.6rem;
   text-align: center;
-  color: #242423; }
+  color: #999; }
 
 .todos-collection {
   width: 100%;
+  height: auto;
   list-style: none;
-  padding: 2rem; }
+  margin-top: 2rem; }
 
 .subtask-collection {
-  width: 100%;
+  height: auto;
   list-style: none;
-  margin-left: 2rem; }
+  margin-left: 1rem; }
+
+.todos-collection > .task-list-item {
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem; }
 
 .main-input__container {
   display: grid;
@@ -90,7 +123,7 @@ body {
     border: 0.18rem solid #00b4d8; }
 
 .todo-input::placeholder {
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-style: italic;
   font-weight: 400;
   color: #999; }
@@ -116,44 +149,37 @@ body {
     color: #999; }
 
 .header {
-  width: 90%;
+  width: 70%;
   margin: 0 auto; }
 
 #filters {
   list-style: none;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-radius: 3rem;
-  padding: 1.5rem 2rem; }
+  justify-content: space-evenly; }
 
 #filters a {
-  font-size: 2.3rem;
+  font-size: 1.6rem;
   text-decoration: none;
-  padding: 1rem 2rem;
-  border-radius: 3rem;
-  border: 0.1rem solid transparent;
+  padding: 0.5rem;
+  border: 0.0rem solid transparent;
   transition: all .5s ease-in; }
   #filters a:link {
-    color: #242423;
-    border: 0.1rem solid #242423; }
+    color: #999; }
   #filters a:visited {
-    color: #242423;
-    box-shadow: inset 10px 10px 35px -10px rgba(0, 0, 0, 0.4); }
+    color: #999; }
   #filters a:hover {
     color: #999;
-    border-radius: 3rem;
-    border: 0.1rem solid #00b4d8;
-    box-shadow: inset 10px 10px 35px -10px rgba(0, 0, 0, 0.3); }
+    border-bottom: 0.1rem solid #00b4d8; }
   #filters a:active {
-    color: #242423;
-    border-radius: 3rem;
-    border: 0.1rem solid #00b4d8;
-    box-shadow: inset 10px 10px 35px -10px rgba(0, 0, 0, 0.4); }
+    color: #999;
+    border-bottom: 0.1rem solid #00b4d8; }
 
 .tasks-left {
   color: #00b4d8;
-  font-size: 3rem; }
+  font-size: 1.6rem;
+  margin-left: 0.3rem;
+  margin-right: 0.3rem; }
 
 .task-list-item .todo-view {
   display: grid;
@@ -163,7 +189,8 @@ body {
   grid-template-rows: 1fr;
   grid-column-gap: 1rem;
   align-items: center;
-  justify-items: center; }
+  justify-items: center;
+  border-bottom: 0.1rem solid #242423; }
 
 .toggle {
   grid-column: 1 / 2;
@@ -204,13 +231,10 @@ body {
   grid-row: 1 / -1;
   width: 100%;
   font-family: inherit;
-  font-size: 2.5rem;
-  font-weight: 300;
+  font-size: 1.6rem;
+  font-weight: 100;
   color: #999;
-  padding: 1rem 15rem 1rem 5rem;
-  border-radius: 3rem;
-  border-bottom: 0.1rem solid #242423;
-  box-shadow: inset 10px 10px 35px -10px rgba(0, 0, 0, 0.2); }
+  padding: 1rem 15rem 1rem 5rem; }
 
 .subtask-adding-view__btn {
   font-family: inherit;
@@ -276,30 +300,3 @@ body {
 .task-list-item .todo-view:hover .edit-task__btn {
   cursor: pointer;
   opacity: 1; }
-
-.subtask-adding-view {
-  display: none; }
-
-.subtask-adding-view.on {
-  display: block; }
-
-.edit-task-view {
-  display: none; }
-
-.task-list-item.editing-on .edit-task-view.on {
-  display: block; }
-
-.task-list-item.editing-on .todo-view {
-  display: none; }
-
-.task-list-item.completed label {
-  text-decoration: line-through; }
-
-.task-list-item.completed ul {
-  display: none; }
-
-.task-list-item.completed .edit-task__btn {
-  display: none; }
-
-.task-list-item.completed .subtask-adding-view__btn {
-  display: none; }
