@@ -4,7 +4,7 @@
     grid-row: 1fr;
 }
 
-.todo-input {
+.task-input {
     width: 100%;
     outline: none;
 
@@ -31,14 +31,14 @@
     }
 }
 
-.todo-input::placeholder{
+.task-input::placeholder{
     font-size: 1.6rem;
     font-style: italic;
     font-weight: 400;
     color: $grey-dark-2;
 }
 
-.add-todo__btn {
+.add-task__btn {
     font-family: inherit;
     font-size: 1.6rem;
     font-weight: 100;

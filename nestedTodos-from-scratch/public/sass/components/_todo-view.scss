@@ -1,4 +1,4 @@
-.task-list-item .todo-view {
+.task-list-item .task-view {
     display: grid;
     width: 100%;
     height: 100%;
@@ -79,7 +79,7 @@
     
 }
 
-.task-list-item .todo-view .subtask-adding-view__btn {
+.task-list-item .task-view .subtask-adding-view__btn {
     &:hover {
         transform: scale(1.3);
         color: limegreen;
@@ -101,7 +101,7 @@
     opacity: 0;
 }
 
-.task-list-item .todo-view .delete-task__btn {
+.task-list-item .task-view .delete-task__btn {
     &:hover {
         transform: scale(1.3);
         color: crimson;
@@ -123,14 +123,14 @@
     opacity: 0;
 }
 
-.task-list-item .todo-view .edit-task__btn {
+.task-list-item .task-view .edit-task__btn {
     &:hover {
         transform: scale(1.3);
         
     }
 }
 
-.task-list-item .todo-view {
+.task-list-item .task-view {
     
 
     &:hover .subtask-adding-view__btn {

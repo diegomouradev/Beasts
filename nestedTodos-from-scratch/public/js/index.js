@@ -18,9 +18,14 @@ var utilities = {
         }
     }
 };
+
+
 var App = {
     initialize: function() {
-        this.todos = utilities.storageManager('todos');
+        this.tasks = utilities.storageManager('tasks');
+        var tasks = this.tasks;
+        window.tasks = tasks;
+        
         eventHandler.setupEventListeners();
         templateBuilder.header();
 
@@ -33,7 +38,7 @@ var App = {
 
     },
     addTask: function(inputValue){
-        this.todos.push({
+        this.tasks.push({
             id: utilities.idGenerator(),
             value: inputValue,
             completed: false,
@@ -41,124 +46,124 @@ var App = {
             children: []
         });
     },
-    addSubtask: function(arr, parentObjId, subtaskValue) {
-        for ( var i = 0; i < arr.length; i++) {
-            var todo = arr[i];
-            if (todo.id === parentObjId) {
-                todo.children.push({
+    addSubtask: function(tasks, parentObjId, subtaskValue) {
+        for ( var i = 0; i < tasks.length; i++) {
+            var task = tasks[i];
+            if (task.id === parentObjId) {
+                task.children.push({
                     id: utilities.idGenerator(),
                     value: subtaskValue,
                     completed: false,
                     hasChildren: false,
                     children: []
                 });
-                todo.hasChildren = true;
+                task.hasChildren = true;
                 break;
-            } else if (todo.hasChildren) {
-                var children = todo.children;
+            } else if (task.hasChildren) {
+                var children = task.children;
                 this.addSubtask(children, parentObjId, subtaskValue);
             };
         };
     },
-    deleteTask: function(arr, parentObjId) {  
-        for(var i = 0; i < arr.length; i++) {
-            var todo = arr[i];
-            if (todo.id === parentObjId) {
-                var indexToDelete = arr.indexOf(todo);
-                arr = arr.splice(indexToDelete, 1);
-            } else if (todo.hasChildren) {
-                var children = todo.children;
+    deleteTask: function(tasks, parentObjId) {  
+        for(var i = 0; i < tasks.length; i++) {
+            var task = tasks[i];
+            if (task.id === parentObjId) {
+                var indexToDelete = tasks.indexOf(task);
+                tasks = tasks.splice(indexToDelete, 1);
+            } else if (task.hasChildren) {
+                var children = task.children;
                 this.deleteTask(children, parentObjId);
             };
         };
     },
-    editTask: function(arr, parentObjId, editedValue) {
+    editTask: function(tasks, parentObjId, editedValue) {
         
-        for (var i = 0; i < arr.length; i++) {
-            var todo = arr[i];
-            if ( todo.id === parentObjId) {
-                todo.value = editedValue;
-            } else if (todo.hasChildren) {
-                var children  = todo.children;
+        for (var i = 0; i < tasks.length; i++) {
+            var task = tasks[i];
+            if ( task.id === parentObjId) {
+                task.value = editedValue;
+            } else if (task.hasChildren) {
+                var children  = task.children;
                 this.editTask(children, parentObjId, editedValue);
             };
         }
         
     },
-    toggleCompleted: function (arr, parentObjId) {
-        for (var i = 0; i < arr.length; i++) {
-            var todo = arr[i];
-            if(todo.id === parentObjId) {
-                todo.completed = !todo.completed;
-                var parentStatus = todo.completed;
-                if(todo.hasChildren) {
-                    var children = todo.children;
+    toggleCompleted: function (tasks, parentObjId) {
+        for (var i = 0; i < tasks.length; i++) {
+            var task = tasks[i];
+            if(task.id === parentObjId) {
+                task.completed = !task.completed;
+                var parentStatus = task.completed;
+                if(task.hasChildren) {
+                    var children = task.children;
                     this.toggleChildren(children, parentStatus);
                 }
-            } else if(todo.hasChildren) {
-                var children = todo.children;
+            } else if(task.hasChildren) {
+                var children = task.children;
                 this.toggleCompleted(children, parentObjId);
             };
         };
     },
     toggleChildren: function (children, parentStatus) {
-        children.map( function(todo) {
-            todo.completed = parentStatus;
-            if(todo.hasChildren){
-                var children = todo.children;
+        children.map( function(task) {
+            task.completed = parentStatus;
+            if(task.hasChildren){
+                var children = task.children;
                 App.toggleChildren(children, parentStatus); 
             };
         });
     },
     getFilteredTasks: function () {
-        var arr = this.todos;
+        var tasks = this.tasks;
         
         if (this.filter === 'active') {
-            return this.getTasksTodo(arr);
+            return this.getTasksTodo(tasks);
         }
 
         if (this.filter === 'completed') {
-            return this.getCompletedTasks(arr);
+            return this.getCompletedTasks(tasks);
         }
 
-        return this.todos;
+        return this.tasks;
     },
-    getTasksTodo: function (arr) {
-        return arr.reduce(function filter(acc, todo) {
-            if (!todo.completed) {
-                if (todo.hasChildren) {
-                    var todoNoChildren = {};
-                    Object.assign(todoNoChildren, todo);
-                    todoNoChildren.children = [];
-                    acc.push(todoNoChildren);
+    getTasksTodo: function (tasks) {
+        return tasks.reduce(function filter(acc, task) {
+            if (!task.completed) {
+                if (task.hasChildren) {
+                    var taskNoChildren = {};
+                    Object.assign(taskNoChildren, task);
+                    taskNoChildren.children = [];
+                    acc.push(taskNoChildren);
 
-                    var arr = todo.children;
-                    var hasToDoChild = arr.some( function (childTodo) {
-                        return !childTodo.completed;
+                    var tasks = task.children;
+                    var hasTaskChild = tasks.some( function (childTask) {
+                        return !childTask.completed;
                     });
 
-                    if(hasToDoChild) {
-                        acc.push(App.getTasksTodo(arr));
+                    if(hasTaskChild) {
+                        acc.push(App.getTasksTodo(tasks));
                     }
                     
                 } else {
-                    acc.push(todo);
+                    acc.push(task);
                 }
             } 
             return acc.flat();
         }, []);
     },
-    getCompletedTasks: function (arr) {
-        return arr.reduce(function filter(acc, todo) {
-            if (todo.completed) {
-                acc.push(todo);
-            } else if (!todo.completed && todo.hasChildren) {
-                var arr = todo.children;
-                var hasCompletedChild = arr.some (function(childTodo){
-                    return childTodo.completed;
+    getCompletedTasks: function (tasks) {
+        return tasks.reduce(function filter(acc, task) {
+            if (task.completed) {
+                acc.push(task);
+            } else if (!task.completed && task.hasChildren) {
+                var tasks = task.children;
+                var hasCompletedChild = tasks.some (function(childTask){
+                    return childTask.completed;
                 });
                 if(hasCompletedChild){
-                    acc.push(App.getCompletedTasks(arr));
+                    acc.push(App.getCompletedTasks(tasks));
                 }
             }
             return acc;
@@ -167,11 +172,11 @@ var App = {
 };
 var eventHandler = {
     setupEventListeners: function() {
-        var addTaskBtn = document.querySelector(".add-todo__btn")
+        var addTaskBtn = document.querySelector(".add-task__btn")
         addTaskBtn.addEventListener('click', this.addTask.bind(this));
         
-        var todosCollection = document.querySelector('.todos-collection');
-        todosCollection.addEventListener('click', function(e){
+        var tasksCollection = document.querySelector('.tasks-collection');
+        tasksCollection.addEventListener('click', function(e){
             if(e.target.className === "subtask-adding-view__btn") {
                 renderInterface.subtaskAddView(e);
             } else if(e.target.className === "add-subtask__btn") {
@@ -193,8 +198,8 @@ var eventHandler = {
     },
     addTask: function(e) {
         var parentContainer = e.target.closest('div');
-        var todoInput = parentContainer.querySelector('[name=todo-input]');
-        var inputValue = todoInput.value.trim();
+        var taskInput = parentContainer.querySelector('[name=task-input]');
+        var inputValue = taskInput.value.trim();
         App.addTask(inputValue);
         renderInterface.resetInput()
         renderInterface.tasksList();
@@ -204,16 +209,16 @@ var eventHandler = {
         var parentObjId = parentLi.id;
         var subtaskInput = parentLi.querySelector('[name=subtask-input]');
         var subtaskValue = subtaskInput.value.trim();
-        var arr = App.todos;
-        App.addSubtask(arr, parentObjId, subtaskValue);
+  
+        App.addSubtask(tasks, parentObjId, subtaskValue);
         renderInterface.tasksList();
     },
     deleteTask: function(e) {
         var parentLi = e.target.closest('li');
         var parentLiId = parentLi.id;
         var parentObjId = parentLiId;
-        var arr = App.todos;
-        App.deleteTask(arr, parentObjId);
+        var tasks = tasks;
+        App.deleteTask(tasks, parentObjId);
         renderInterface.tasksList();
     },
     editTask: function(e) {
@@ -224,16 +229,14 @@ var eventHandler = {
         var editedValue = parentLi.querySelector('[name=edit-task-input]');
         editedValue = editedValue.value;
 
-        var arr = App.todos;
-        App.editTask(arr, parentObjId, editedValue);
+        App.editTask(tasks, parentObjId, editedValue);
         renderInterface.tasksList();
     },
     toggleCompleted: function(e) {
         var parentLi = e.target.closest('li');
         var parentLiId = parentLi.id;
         var parentObjId = parentLiId;
-        var arr = App.todos;
-        App.toggleCompleted(arr, parentObjId);
+        App.toggleCompleted(tasks, parentObjId);
         renderInterface.tasksList();
 
         // LET'S ADD A RENDER TO HIDE THE ADD SUBTASK, AND EDIT ON TOGGLED ELEMENTS
@@ -241,23 +244,23 @@ var eventHandler = {
 };
 
 var templateBuilder = {
-    todoItems: function(tasks) {
-        var template = tasks.map( function(todo,i) {
+    taskItems: function(tasks) {
+        var template = tasks.map( function(task,i) {
 
-            if(Array.isArray(todo)) {
-                todo = todo[0];
+            if(Array.isArray(task)) {
+                task = task[0];
             }
 
-            if(todo.hasChildren) {
-                var templateSubtask = templateBuilder.subtaskItems(todo);
+            if(task.hasChildren) {
+                var templateSubtask = templateBuilder.subtaskItems(task);
             }
 
-            return templateTodo = `
-            <li id="${todo.id}" class="task-list-item ${todo.completed ? "completed" : ""}">
+            return templateTask = `
+            <li id="${task.id}" class="task-list-item ${task.completed ? "completed" : ""}">
 
-                <div class="todo-view">
-                    <input id="toggle-${todo.id}" type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
-                    <label for="toggle-${todo.id}"class="task-value"> ${todo.value} </label>
+                <div class="task-view">
+                    <input id="toggle-${task.id}" type="checkbox" class="toggle" ${task.completed ? "checked" : ""}/>
+                    <label for="toggle-${task.id}"class="task-value"> ${task.value} </label>
                     <input type="button" value="+" class="subtask-adding-view__btn">
                     <input type="button" value="x" class="delete-task__btn">
                     <input type="button" value="e" class="edit-task__btn">
@@ -275,8 +278,8 @@ var templateBuilder = {
                     <input type="submit" value="Cancel" class="edit-task-remove-view__btn">
                 </div>
                 
-                ${todo.hasChildren ? 
-                    `<ul id="collection-${todo.id}" class="subtask-collection">
+                ${task.hasChildren ? 
+                    `<ul id="collection-${task.id}" class="subtask-collection">
                         ${templateSubtask}
                     </ul>
                 </li>
@@ -285,19 +288,19 @@ var templateBuilder = {
         }); 
 
         template = template.join('');
-        renderInterface.todosCollection(template);
+        renderInterface.tasksCollection(template);
 
     },
-    subtaskItems: function(todo) {
-        var templateSubtask = todo.children.map( function(todo,i) {
-            if(todo.hasChildren === true) {
-                var templateSubtaskOthers = templateBuilder.subtaskItems(todo);
+    subtaskItems: function(task) {
+        var templateSubtask = task.children.map( function(task) {
+            if(task.hasChildren === true) {
+                var templateSubtaskOthers = templateBuilder.subtaskItems(task);
             }
             return `
-            <li id="${todo.id}" class="task-list-item ${todo.completed ? "completed" : ""}">
-                <div class="todo-view">
-                    <input id="toggle-${todo.id}" type="checkbox" class="toggle" ${todo.completed ? "checked" : ""}/>
-                    <label for="toggle-${todo.id}" class="task-value"> ${todo.value} </label>
+            <li id="${task.id}" class="task-list-item ${task.completed ? "completed" : ""}">
+                <div class="task-view">
+                    <input id="toggle-${task.id}" type="checkbox" class="toggle" ${task.completed ? "checked" : ""}/>
+                    <label for="toggle-${task.id}" class="task-value"> ${task.value} </label>
                     <input type="button" value="+" class="subtask-adding-view__btn">
                     <input type="button" value="x" class="delete-task__btn">
                     <input type="button" value="e" class="edit-task__btn">
@@ -315,8 +318,8 @@ var templateBuilder = {
                     <input type="submit" value="Cancel" class="edit-task-remove-view__btn">
                 </div>
 
-                ${todo.hasChildren ? 
-                    `<ul id="collection-${todo.id}" class="subtask-collection">
+                ${task.hasChildren ? 
+                    `<ul id="collection-${task.id}" class="subtask-collection">
                         ${templateSubtaskOthers}
                     </ul>
                 </li>` : "</li>"}
@@ -350,8 +353,8 @@ var templateBuilder = {
 var renderInterface = {
     tasksList: function () {
         var tasks = App.getFilteredTasks();
-        var tasksToDo = App.getTasksTodo(App.todos).length;
-        templateBuilder.todoItems(tasks);
+        var tasksToDo = App.getTasksTodo(tasks).length;
+        templateBuilder.taskItems(tasks);
         templateBuilder.header(tasksToDo);
     },
     subtaskAddView: function(e) {
@@ -380,12 +383,12 @@ var renderInterface = {
         addingViewElement.classList.remove('on');
         parentLi.classList.remove('editing-on');
     },
-    todosCollection: function(template) {
-        var todosCollection = document.querySelector('.todos-collection');
-        todosCollection.innerHTML = '';
-        todosCollection.insertAdjacentHTML("beforeend",template);
+    tasksCollection: function(template) {
+        var tasksCollection = document.querySelector('.tasks-collection');
+        tasksCollection.innerHTML = '';
+        tasksCollection.insertAdjacentHTML("beforeend",template);
         this.resetInput();
-        utilities.storageManager('todos', App.todos);
+        utilities.storageManager('tasks', tasks);
     },
     header: function(headerTemplate) {
         var headerElement = document.getElementById('header');
@@ -393,14 +396,14 @@ var renderInterface = {
         headerElement.insertAdjacentHTML("beforeend", headerTemplate);
     },
     resetInput: function() {
-        var todoInput = document.querySelector('[name=todo-input]');
-        if (todoInput.value !== '') {
-            todoInput.value = "";
+        var taskInput = document.querySelector('[name=task-input]');
+        if (taskInput.value !== '') {
+            taskInput.value = "";
         };
 
-        var editTodoInput = document.querySelectorAll('[name=edit-task-input]');
-        if (editTodoInput.value !== '') {
-            editTodoInput.value = "";
+        var editTaskInput = document.querySelectorAll('[name=edit-task-input]');
+        if (editTaskInput.value !== '') {
+            editTaskInput.value = "";
         };
     }
 };
