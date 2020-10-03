@@ -158,21 +158,23 @@ body {
   align-items: center;
   justify-content: space-evenly; }
 
-#filters a {
+a {
   font-size: 1.6rem;
   text-decoration: none;
   padding: 0.5rem;
   border: 0.0rem solid transparent;
   transition: all .5s ease-in; }
-  #filters a:link {
+  a:link {
     color: #999; }
-  #filters a:visited {
+  a:visited {
     color: #999; }
-  #filters a:hover {
+  a:hover {
     color: #999;
     border-bottom: 0.1rem solid #00b4d8; }
-  #filters a:active {
+  a:active {
     color: #999;
+    border-bottom: 0.1rem solid #00b4d8; }
+  a.selected {
     border-bottom: 0.1rem solid #00b4d8; }
 
 .tasks-left {

@@ -18,23 +18,16 @@ var utilities = {
         }
     }
 };
-
-
 var App = {
     initialize: function() {
         this.tasks = utilities.storageManager('tasks');
         var tasks = this.tasks;
         window.tasks = tasks;
-        
-        eventHandler.setupEventListeners();
-        templateBuilder.header();
 
-        new Router({
-            "/:filter": function(filter) {
-              this.filter = filter;
-              renderInterface.tasksList();
-            }.bind(this)
-          }).init("/all");
+        this.filter = window.location.hash;
+
+        eventHandler.setupEventListeners();
+        eventHandler.router();
 
     },
     addTask: function(inputValue){
@@ -46,9 +39,11 @@ var App = {
             children: []
         });
     },
-    addSubtask: function(tasks, parentObjId, subtaskValue) {
-        for ( var i = 0; i < tasks.length; i++) {
-            var task = tasks[i];
+    addSubtask: function(parentObjId, subtaskValue, ...theArgs) {
+        var array = theArgs[0];
+        
+        for ( var i = 0; i < array.length; i++) {
+            var task = array[i];
             if (task.id === parentObjId) {
                 task.children.push({
                     id: utilities.idGenerator(),
@@ -61,38 +56,40 @@ var App = {
                 break;
             } else if (task.hasChildren) {
                 var children = task.children;
-                this.addSubtask(children, parentObjId, subtaskValue);
+                this.addSubtask(parentObjId, subtaskValue, children);
             };
         };
     },
-    deleteTask: function(tasks, parentObjId) {  
-        for(var i = 0; i < tasks.length; i++) {
-            var task = tasks[i];
+    deleteTask: function(parentObjId, ...theArgs) {  
+        var array = theArgs[0];
+        for(var i = 0; i < array.length; i++) {
+            var task = array[i];
             if (task.id === parentObjId) {
-                var indexToDelete = tasks.indexOf(task);
-                tasks = tasks.splice(indexToDelete, 1);
+                var indexToDelete = array.indexOf(task);
+                array = array.splice(indexToDelete, 1);
             } else if (task.hasChildren) {
                 var children = task.children;
-                this.deleteTask(children, parentObjId);
+                this.deleteTask(parentObjId, children);
             };
         };
     },
-    editTask: function(tasks, parentObjId, editedValue) {
-        
-        for (var i = 0; i < tasks.length; i++) {
-            var task = tasks[i];
+    editTask: function(parentObjId, editedValue, ...theArgs) {
+        var array = theArgs[0];
+        for (var i = 0; i < array.length; i++) {
+            var task = array[i];
             if ( task.id === parentObjId) {
                 task.value = editedValue;
             } else if (task.hasChildren) {
                 var children  = task.children;
-                this.editTask(children, parentObjId, editedValue);
+                this.editTask(parentObjId, editedValue, children);
             };
         }
         
     },
-    toggleCompleted: function (tasks, parentObjId) {
-        for (var i = 0; i < tasks.length; i++) {
-            var task = tasks[i];
+    toggleCompleted: function (parentObjId, ...theArgs) {
+        var array = theArgs[0];
+        for (var i = 0; i < array.length; i++) {
+            var task = array[i];
             if(task.id === parentObjId) {
                 task.completed = !task.completed;
                 var parentStatus = task.completed;
@@ -102,7 +99,7 @@ var App = {
                 }
             } else if(task.hasChildren) {
                 var children = task.children;
-                this.toggleCompleted(children, parentObjId);
+                this.toggleCompleted(parentObjId, children);
             };
         };
     },
@@ -117,15 +114,12 @@ var App = {
     },
     getFilteredTasks: function () {
         var tasks = this.tasks;
-        
-        if (this.filter === 'active') {
+        if (this.filter === '#/todo') {
             return this.getTasksTodo(tasks);
         }
-
-        if (this.filter === 'completed') {
+        if (this.filter === '#/completed') {
             return this.getCompletedTasks(tasks);
         }
-
         return this.tasks;
     },
     getTasksTodo: function (tasks) {
@@ -174,6 +168,8 @@ var eventHandler = {
     setupEventListeners: function() {
         var addTaskBtn = document.querySelector(".add-task__btn")
         addTaskBtn.addEventListener('click', this.addTask.bind(this));
+
+        window.addEventListener('hashchange', this.router.bind(this));
         
         var tasksCollection = document.querySelector('.tasks-collection');
         tasksCollection.addEventListener('click', function(e){
@@ -209,37 +205,40 @@ var eventHandler = {
         var parentObjId = parentLi.id;
         var subtaskInput = parentLi.querySelector('[name=subtask-input]');
         var subtaskValue = subtaskInput.value.trim();
-  
-        App.addSubtask(tasks, parentObjId, subtaskValue);
+        App.addSubtask(parentObjId, subtaskValue, tasks);
         renderInterface.tasksList();
     },
     deleteTask: function(e) {
         var parentLi = e.target.closest('li');
-        var parentLiId = parentLi.id;
-        var parentObjId = parentLiId;
-        var tasks = tasks;
-        App.deleteTask(tasks, parentObjId);
+        var parentObjId = parentLi.id;
+        App.deleteTask(parentObjId, tasks);
         renderInterface.tasksList();
     },
     editTask: function(e) {
         var parentLi = e.target.closest('li');
-        var parentLiId = parentLi.id;
-        var parentObjId = parentLiId;
-
+        var parentObjId = parentLi.id;
         var editedValue = parentLi.querySelector('[name=edit-task-input]');
         editedValue = editedValue.value;
-
-        App.editTask(tasks, parentObjId, editedValue);
+        App.editTask(parentObjId, editedValue, tasks);
         renderInterface.tasksList();
     },
     toggleCompleted: function(e) {
         var parentLi = e.target.closest('li');
-        var parentLiId = parentLi.id;
-        var parentObjId = parentLiId;
-        App.toggleCompleted(tasks, parentObjId);
+        var parentObjId = parentLi.id;
+        App.toggleCompleted(parentObjId, tasks);
+        this.router();
+    },
+    router: function(e) {
+        if(arguments[0] === undefined) {
+            var newHash = '#/all';
+            window.location.hash = newHash;
+        } else {
+            var newHash = e.newURL.match(/(\#\/.*)/gi);
+            window.location.hash = newHash[0];
+        }
+        
+        App.filter = window.location.hash;
         renderInterface.tasksList();
-
-        // LET'S ADD A RENDER TO HIDE THE ADD SUBTASK, AND EDIT ON TOGGLED ELEMENTS
     }
 };
 
@@ -330,20 +329,20 @@ var templateBuilder = {
     },
     header: function(tasksToDo) {
         var headerData = {
-            filter: App.filter,
-            tasksToDo: tasksToDo,
+            filter: App.filter === "" ? App.filter = "#/all" : App.filter,
+            tasksToDo: tasksToDo
         }
         var headerTemplate = `
         <h2 class="heading-secondary"> YOU HAVE<span class="tasks-left"> ${headerData.tasksToDo}</span> TASK${ tasksToDo === 1 ? "" : 'S'} LEFT TO DO</h2>
         <ul id="filters">
           <li>
-            <a ${headerData.filter === "all" ? 'class="selected"' : ""} href="#/all">All</a>
+            <a ${headerData.filter === "#/all" ? 'class="selected"' : ""} href="#/all">All</a>
           </li>
           <li>
-            <a ${headerData.filter === "active" ? 'class="selected"' : ""} href="#/active">Active</a>
+            <a ${headerData.filter === "#/todo" ? 'class="selected"' : ""} href="#/todo">To Do</a>
           </li>
           <li>
-            <a ${headerData.filter === "completed" ? 'class="selected"' : ""} href="#/completed">Completed</a>
+            <a ${headerData.filter === "#/completed" ? 'class="selected"' : ""} href="#/completed">Completed</a>
           </li>
         </ul>
         `

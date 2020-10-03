@@ -11,14 +11,13 @@
     
 }
 
-#filters a {
+a {
     font-size: 1.6rem;
     text-decoration: none;
     padding: 0.5rem;
     border: 0.0rem solid transparent;    
     transition: all .5s ease-in;
     
-
     &:link {
         color: $grey-dark-2;
     }
@@ -36,6 +35,12 @@
         color: $grey-dark-2;
         border-bottom: 0.1rem solid $acent-turquoise;
     }
+
+    &.selected {
+        border-bottom: 0.1rem solid $acent-turquoise; 
+        
+    }
+
 }
 
 .tasks-left {
