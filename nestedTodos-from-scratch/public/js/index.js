@@ -267,7 +267,7 @@ var templateBuilder = {
 
                 <div class="subtask-adding-view">
                     <input type="text" name="subtask-input" class="subtask-input" placeholder="Your Subtask goes here!" autofocus>
-                    <input type="submit" value="Save Subtask" class="add-subtask__btn">
+                    <input type="submit" value="Save" class="add-subtask__btn">
                     <input type="submit" value="Cancel" class="subtask-remove-view__btn">
                 </div>
 
@@ -307,7 +307,7 @@ var templateBuilder = {
 
                 <div class="subtask-adding-view">
                     <input type="text" name="subtask-input" class="subtask-input" placeholder="Your Subtask goes here!" autofocus>
-                    <input type="submit" value="Save Subtask" class="add-subtask__btn">
+                    <input type="submit" value="Save" class="add-subtask__btn">
                     <input type="button" value="Cancel" class="subtask-remove-view__btn">
                 </div>
 

@@ -38,12 +38,6 @@ body {
   background-image: url(http://api.thumbr.it/whitenoise-361x370.png?background=333533ff&noise=626262&density=31&opacity=11);
   box-shadow: 9px 9px 44px -20px rgba(0, 0, 0, 0.78); }
 
-.subtask-adding-view {
-  display: none; }
-
-.subtask-adding-view.on {
-  display: block; }
-
 .edit-task-view {
   display: none; }
 
@@ -70,8 +64,31 @@ body {
   font-weight: 900;
   font-size: 6rem;
   text-align: center;
-  color: #999;
-  margin-bottom: 3rem; }
+  color: #333;
+  margin-bottom: 3rem;
+  animation-name: heading;
+  animation-duration: 10s;
+  animation-iteration-count: infinite; }
+
+@keyframes heading {
+  0% {
+    text-shadow: 2px 1px 6px rgba(0, 0, 0, 0.2); }
+  10% {
+    text-shadow: 2px 1px 6px rgba(0, 0, 0, 0.3); }
+  25% {
+    text-shadow: 2px 1px 6px rgba(0, 0, 0, 0.4); }
+  35% {
+    text-shadow: 2px 1px 6px rgba(0, 0, 0, 0.5); }
+  50% {
+    text-shadow: 2px 1px 6px rgba(0, 0, 0, 0.5); }
+  60% {
+    text-shadow: 2px 1px 6px rgba(0, 0, 0, 0.4); }
+  85% {
+    text-shadow: 2px 1px 6px rgba(0, 0, 0, 0.3); }
+  95% {
+    text-shadow: 2px 1px 6px rgba(0, 0, 0, 0.2); }
+  100% {
+    text-shadow: 2px 1px 6px rgba(0, 0, 0, 0.2); } }
 
 .heading-secondary {
   margin: 1rem;
@@ -302,3 +319,73 @@ a {
 .task-list-item .task-view:hover .edit-task__btn {
   cursor: pointer;
   opacity: 1; }
+
+.subtask-adding-view {
+  display: none; }
+
+.subtask-adding-view.on {
+  display: grid;
+  grid-template-columns: 1fr min-content min-content;
+  grid-row: 1fr; }
+
+.subtask-input {
+  width: 100%;
+  outline: none;
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  padding: 1.5rem 2rem 1.5rem 2rem;
+  margin-bottom: 3rem;
+  background-color: transparent;
+  font-size: 1.6rem;
+  font-family: inherit;
+  font-weight: 400;
+  color: #a9b0ac;
+  border-bottom-right-radius: 1.5rem;
+  border-bottom-left-radius: 1.5rem;
+  border: 0.1rem solid #00b4d8;
+  border-top: none;
+  transition: all .3s; }
+  .subtask-input:focus {
+    box-shadow: 0 1rem 1rem 0.3rem rgba(0, 0, 0, 0.3);
+    border: 0.1rem solid #00b4d8;
+    border-top: none; }
+
+.subtask-input::placeholder {
+  font-size: 1.6rem;
+  font-style: italic;
+  font-weight: 400;
+  color: #999; }
+
+.add-subtask__btn {
+  font-family: inherit;
+  font-size: 1.6rem;
+  font-weight: 100;
+  color: #999;
+  text-align: center;
+  cursor: pointer;
+  grid-column: 2 / 3;
+  grid-row: 1 / -1;
+  background-color: transparent;
+  border: none;
+  padding: 0.5rem;
+  transform: translate(-1rem, -1.6rem);
+  transition: all .3s ease-in-out; }
+  .add-subtask__btn:hover {
+    color: #00b4d8; }
+
+.subtask-remove-view__btn {
+  font-family: inherit;
+  font-size: 1.6rem;
+  font-weight: 100;
+  color: #999;
+  text-align: center;
+  cursor: pointer;
+  grid-column: 3 / 4;
+  grid-row: 1 / -1;
+  background-color: transparent;
+  border: none;
+  padding: 0.5rem;
+  transform: translate(-1rem, -1.6rem);
+  transition: all .3s ease-in-out; }
+  .subtask-remove-view__btn:hover {
+    color: #00b4d8; }

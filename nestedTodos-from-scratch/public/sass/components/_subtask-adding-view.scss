@@ -1,0 +1,85 @@
+.subtask-adding-view {
+    display: none;
+}
+
+.subtask-adding-view.on {
+    display: grid;
+    grid-template-columns: 1fr min-content min-content;
+    grid-row: 1fr;
+}
+
+.subtask-input {
+    width: 100%;
+    outline: none;
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    padding: 1.5rem 2rem 1.5rem 2rem;
+    margin-bottom: 3rem;
+    background-color: transparent;
+
+    font-size: 1.6rem;
+    font-family: inherit;
+    font-weight: 400;
+    color: $grey-light-3;
+
+    border-bottom-right-radius: 1.5rem;
+    border-bottom-left-radius: 1.5rem;
+    border: 0.1rem solid $acent-turquoise;
+    border-top: none;
+    transition: all .3s;
+
+    &:focus {
+        box-shadow: 0 1rem 1rem 0.3rem rgba($color-black, .3);
+        border: 0.1rem solid $acent-turquoise;
+        border-top: none;
+    }
+}
+
+.subtask-input::placeholder{
+    font-size: 1.6rem;
+    font-style: italic;
+    font-weight: 400;
+    color: $grey-dark-2;
+}
+
+.add-subtask__btn {
+    font-family: inherit;
+    font-size: 1.6rem;
+    font-weight: 100;
+    color: $grey-dark-2;
+    text-align: center;
+    cursor: pointer;
+    grid-column: 2 / 3;
+    grid-row: 1 / -1;
+    background-color: transparent;
+    border: none;
+    padding: 0.5rem;
+    
+    transform: translate(-1rem, -1.6rem);
+    transition: all .3s ease-in-out;
+
+    &:hover {
+        color: $acent-turquoise;
+    }
+}
+
+.subtask-remove-view__btn {
+    font-family: inherit;
+    font-size: 1.6rem;
+    font-weight: 100;
+    color: $grey-dark-2;
+    text-align: center;
+    cursor: pointer;
+    grid-column: 3 / 4;
+    grid-row: 1 / -1;
+    background-color: transparent;
+    border: none;
+    padding: 0.5rem;
+    
+    transform: translate(-1rem, -1.6rem);
+    transition: all .3s ease-in-out;
+
+    &:hover {
+        color: $acent-turquoise;
+    }
+}
