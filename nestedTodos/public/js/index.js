@@ -114,7 +114,7 @@ var App = {
     },
     getFilteredTasks: function () {
         var tasks = this.tasks;
-        if (this.filter === '#/todo') {
+        if (this.filter === '   ') {
             return this.getTasksTodo(tasks);
         }
         if (this.filter === '#/completed') {
